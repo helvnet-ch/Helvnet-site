@@ -2,37 +2,36 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Demande envoyée - Helvnet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Votre demande a bien été transmise à Helvnet.">
+  <title>Demande envoyée | Helvnet</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/main.js" defer></script>
 </head>
 <body>
-<nav class="navbar">
-  <div class="container nav-inner">
-    <a class="brand" href="index.html"><img class="logo" src="assets/logo-nav.png" alt="Helvnet"></a>
-    <div class="nav-links">
-      <a href="index.html">Accueil</a><a href="services.html">Offres</a>
-      <a href="approche.html">Approche</a><a href="contact.html">Contact</a>
-      <a class="btn btn-red" href="contact.html">Audit gratuit</a>
+  <a class="skip-link" href="#contenu">Aller au contenu</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="Helvnet, accueil"><img src="assets/logo.svg" alt="Helvnet"></a>
+      <a class="button" href="index.html">Retour à l’accueil</a>
     </div>
-  </div>
-</nav>
-
-<main>
-  <section class="page-hero">
-    <div class="container">
-      <p class="eyebrow">Demande envoyée</p>
-      <h1>Merci. Votre demande est envoyée.</h1>
-      <p class="lead">On revient vers vous rapidement. Vous pouvez aussi appeler ou écrire sur WhatsApp si c'est urgent.</p>
-      <div class="hero-actions" style="justify-content:flex-start;margin:28px 0 0">
-        <a class="btn btn-red" href="tel:+41798721965">Appeler</a>
-        <a class="btn btn-outline" href="https://wa.me/41798721965">WhatsApp</a>
+  </header>
+  <main id="contenu">
+    <section class="page-hero">
+      <div class="container" data-reveal>
+        <p class="eyebrow">Message envoyé</p>
+        <h1 class="page-title"><span>Merci pour votre demande.</span><span class="title-accent">Nous revenons vers vous rapidement.</span></h1>
+        <p class="page-lead">Votre message a bien été transmis à Helvnet. Une copie est conservée dans les soumissions Netlify.</p>
+        <div class="actions"><a class="button button-primary" href="index.html">Revenir à l’accueil</a></div>
       </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top"><a class="brand" href="index.html"><img src="assets/logo.svg" alt="Helvnet"></a></div>
+      <p class="copyright">© <span data-year></span> Helvnet.</p>
     </div>
-  </section>
-</main>
+  </footer>
 </body>
 </html>

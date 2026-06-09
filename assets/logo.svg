@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 38" role="img" aria-labelledby="title">
+  <title id="title">Helvnet</title>
+  <path fill="#fff" d="M4 9h29l-4 6H0z"/>
+  <path fill="#D6291E" d="M0 22h29l-4 6H-4z"/>
+  <text x="42" y="27" fill="#fff" font-family="Arial, sans-serif" font-size="24" font-weight="800" letter-spacing="1">HELV</text>
+  <text x="111" y="27" fill="#D6291E" font-family="Arial, sans-serif" font-size="24" font-weight="800" letter-spacing="1">NET</text>
+</svg>

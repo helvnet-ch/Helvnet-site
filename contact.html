@@ -1,123 +1,32 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Contact - Helvnet</title>
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Contactez Helvnet pour un audit gratuit de votre présence en ligne.">
+  <title>Contact | Helvnet</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="css/style.css"><script src="js/main.js" defer></script>
 </head>
 <body>
-<nav class="navbar">
-  <div class="container nav-inner">
-    <a class="brand" href="index.html"><img class="logo" src="assets/logo-nav.png" alt="Helvnet"></a>
-    <div class="nav-links">
-      <a href="index.html">Accueil</a><a href="services.html">Offres</a>
-      <a href="approche.html">Approche</a><a href="a-propos.html">À propos</a>
-      <a href="contact.html">Contact</a><a class="btn btn-red" href="contact.html">Audit gratuit</a>
-    </div>
-  </div>
-</nav>
-
-<main>
-  <section class="page-hero">
-    <div class="container">
-      <p class="eyebrow">Contact</p>
-      <h1>Voyons ce qui freine vos demandes.</h1>
-      <p class="lead">15 minutes. Google, avis, site, concurrents. Vous repartez avec une lecture claire.</p>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container contact-grid">
-      <div>
-        <p class="eyebrow">Audit gratuit</p>
-        <h2 class="st" style="margin-bottom:18px">Demandez l'audit.</h2>
-        <p class="lead" style="margin-bottom:32px">On vous répond avec un créneau. Simple, rapide, concret.</p>
-
-        <form class="contact-form" name="audit-helvnet" method="POST" action="/merci.html" data-netlify="true" netlify netlify-honeypot="bot-field">
-          <input type="hidden" name="form-name" value="audit-helvnet">
-          <p class="hidden-field">
-            <label>Ne pas remplir <input name="bot-field"></label>
-          </p>
-
-          <div class="form-grid">
-            <label>
-              <span>Nom</span>
-              <input type="text" name="nom" autocomplete="name" required>
-            </label>
-            <label>
-              <span>Entreprise</span>
-              <input type="text" name="entreprise" autocomplete="organization" required>
-            </label>
-          </div>
-
-          <div class="form-grid">
-            <label>
-              <span>Email</span>
-              <input type="email" name="email" autocomplete="email" required>
-            </label>
-            <label>
-              <span>Téléphone</span>
-              <input type="tel" name="telephone" autocomplete="tel">
-            </label>
-          </div>
-
-          <label>
-            <span>Site ou fiche Google</span>
-            <input type="url" name="site" placeholder="https://...">
-          </label>
-
-          <label>
-            <span>Votre situation</span>
-            <textarea name="message" rows="5" required placeholder="Ce que vous voulez améliorer en priorité."></textarea>
-          </label>
-
-          <label>
-            <span>Meilleur moyen de contact</span>
-            <select name="contact_prefere">
-              <option>Email</option>
-              <option>Téléphone</option>
-              <option>WhatsApp</option>
-            </select>
-          </label>
-
-          <button class="btn btn-red form-submit" type="submit">Envoyer la demande</button>
-        </form>
-      </div>
-
-      <div>
-        <div class="audit-box">
-          <p class="eyebrow">Ce qu'on vérifie</p>
-          <h3>Avant l'appel</h3>
-          <p>Ce que votre client voit et comprend en quelques secondes.</p>
-          <div class="check">Fiche Google Business</div>
-          <div class="check">Avis et réponses</div>
-          <div class="check">Site sur mobile</div>
-          <div class="check">Photos et cohérence visuelle</div>
-          <div class="check">Concurrents directs</div>
+  <a class="skip-link" href="#contenu">Aller au contenu</a>
+  <header class="site-header"><div class="container header-inner"><a class="brand" href="index.html" aria-label="Helvnet, accueil"><img src="assets/logo.svg" alt="Helvnet"></a><button class="menu-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="navigation"><span></span></button><nav class="site-nav" id="navigation" aria-label="Navigation principale"><a href="index.html">Accueil</a><a href="services.html">Services</a><a href="approche.html">Approche</a><a href="a-propos.html">À propos</a><a href="contact.html" aria-current="page">Contact</a><a class="nav-cta" href="#audit">Audit gratuit</a></nav></div></header>
+  <main id="contenu">
+    <section class="page-hero"><div class="container" data-reveal><p class="eyebrow">Premier échange</p><h1 class="page-title"><span>Parlons de ce que</span><span class="title-accent">vos clients voient aujourd’hui.</span></h1><p class="page-lead">Décrivez-nous votre activité et votre situation. Nous reviendrons vers vous avec un premier regard concret, sans jargon et sans engagement.</p></div></section>
+    <section class="section" id="audit"><div class="container contact-layout">
+      <div class="contact-copy" data-reveal><p class="eyebrow">Audit gratuit</p><h2>15 minutes pour faire le point.</h2><p>Nous regardons votre site actuel, votre profil Google et la cohérence de votre présence locale. Vous repartez avec des priorités claires, que vous travailliez avec nous ou non.</p><div class="contact-details"><p>Vous préférez écrire directement?</p><a href="mailto:contact@helvnet.ch">contact@helvnet.ch</a></div></div>
+      <form class="contact-form" name="contact" method="post" action="merci.html" data-netlify="true" netlify-honeypot="bot-field" data-reveal>
+        <input type="hidden" name="form-name" value="contact">
+        <input type="hidden" name="subject" value="Nouvelle demande d’audit depuis helvnet.ch">
+        <p hidden><label>Ne pas remplir: <input name="bot-field"></label></p>
+        <div class="form-grid">
+          <div class="field"><label for="nom">Nom *</label><input id="nom" name="nom" type="text" autocomplete="name" required></div>
+          <div class="field"><label for="entreprise">Entreprise *</label><input id="entreprise" name="entreprise" type="text" autocomplete="organization" required></div>
+          <div class="field"><label for="email">Email *</label><input id="email" name="email" type="email" autocomplete="email" required></div>
+          <div class="field"><label for="telephone">Téléphone</label><input id="telephone" name="telephone" type="tel" autocomplete="tel"></div>
+          <div class="field field-full"><label for="message">Parlez-nous de votre activité *</label><textarea id="message" name="message" required placeholder="Votre activité, votre présence actuelle et ce que vous aimeriez améliorer."></textarea></div>
         </div>
-
-        <div class="contact-direct">
-          <a class="c-method" href="tel:+41798721965"><div class="c-icon">T</div><div class="c-info"><span>Téléphone</span><strong>079 872 19 65</strong></div></a>
-          <a class="c-method" href="mailto:contact@helvnet.ch"><div class="c-icon">@</div><div class="c-info"><span>Email</span><strong>contact@helvnet.ch</strong></div></a>
-          <a class="c-method" href="https://wa.me/41798721965"><div class="c-icon">W</div><div class="c-info"><span>WhatsApp</span><strong>Message direct</strong></div></a>
-        </div>
-      </div>
-    </div>
-  </section>
-</main>
-
-<footer class="footer">
-  <div class="container footer-inner">
-    <div style="display:flex;align-items:center;gap:16px">
-      <img class="footer-logo" src="assets/logo-nav.png" alt="Helvnet">
-      <span class="footer-copy">© 2026 Helvnet - L'image digitale des entreprises locales</span>
-    </div>
-    <div class="footer-links"><a href="services.html">Offres</a><a href="approche.html">Approche</a><a href="a-propos.html">À propos</a></div>
-  </div>
-</footer>
+        <button class="button button-primary" type="submit">Demander mon audit gratuit</button>
+        <p class="form-note">En envoyant ce formulaire, vous acceptez d’être recontacté uniquement au sujet de votre demande.</p>
+      </form>
+    </div></section>
+  </main>
+  <footer class="site-footer"><div class="container"><div class="footer-top"><a class="brand" href="index.html"><img src="assets/logo.svg" alt="Helvnet"></a><nav class="footer-nav" aria-label="Navigation secondaire"><a href="services.html">Services</a><a href="approche.html">Approche</a><a href="a-propos.html">À propos</a><a href="contact.html">Contact</a></nav></div><p class="copyright">© <span data-year></span> Helvnet. Présence locale professionnelle pour PME et indépendants suisses.</p></div></footer>
 </body>
 </html>
