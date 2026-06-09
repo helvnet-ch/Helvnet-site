@@ -210,6 +210,37 @@ h3 { font-size: 1.25rem; letter-spacing: -.025em; }
 .custom-panel { display: flex; align-items: center; justify-content: space-between; gap: 32px; padding: 42px; border: 1px solid var(--line); background: var(--panel); }
 .custom-panel p { max-width: 680px; margin: 12px 0 0; color: var(--muted); }
 
+.complementary-section { padding-top: 82px; }
+.complementary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.complementary-card {
+  position: relative; overflow: hidden; display: flex; min-height: 390px; flex-direction: column;
+  padding: 32px; border: 1px solid var(--line); background: var(--panel); transition: border-color .25s ease, transform .25s ease;
+}
+.complementary-card::before {
+  content: ""; position: absolute; top: -35px; right: -28px; width: 190px; height: 150px; opacity: .42;
+  background: repeating-linear-gradient(115deg, transparent 0 17px, #282828 18px 29px, transparent 30px 43px);
+}
+.complementary-card::after {
+  content: ""; position: absolute; inset: 0 0 auto; height: 2px; background: var(--red);
+  transform: scaleX(0); transform-origin: left; transition: transform .35s ease;
+}
+.complementary-card:hover { border-color: #5a211e; transform: translateY(-4px); }
+.complementary-card:hover::after { transform: scaleX(1); }
+.complementary-card__content { position: relative; z-index: 1; }
+.option-label {
+  margin: 0 0 20px; color: var(--red); font-size: .7rem; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+}
+.complementary-card h3 { max-width: 420px; font-size: 1.55rem; }
+.complementary-description { max-width: 590px; margin: 18px 0 24px; color: #c8c8c8; font-size: .88rem; }
+.complementary-details { padding-top: 18px; border-top: 1px solid var(--line); }
+.complementary-details strong { display: block; margin-bottom: 13px; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; }
+.complementary-details ul { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.complementary-details li {
+  padding: 7px 10px; border: 1px solid var(--line); color: var(--muted); font-size: .75rem; line-height: 1.2;
+}
+.complementary-card .button { position: relative; z-index: 1; align-self: flex-start; margin-top: auto; }
+
 .contact-layout { display: grid; grid-template-columns: .8fr 1.2fr; gap: 80px; }
 .contact-copy p { color: #aaa; }
 .contact-details { margin-top: 38px; padding-top: 28px; border-top: 1px solid var(--line); }
@@ -260,6 +291,7 @@ input:focus, textarea:focus { border-color: var(--red); box-shadow: 0 0 0 3px rg
   .site-nav .nav-cta { margin-top: 16px; padding: 14px 18px; text-align: center; }
   .hero::after, .page-hero::after { right: -190px; width: 65%; opacity: .45; }
   .cards { grid-template-columns: 1fr; gap: 30px; }
+  .complementary-grid { grid-template-columns: 1fr; }
   .offer-card { min-height: auto; }
   .steps { grid-template-columns: 1fr 1fr; }
   .process-steps::before, .process-steps::after { display: none; }
@@ -297,6 +329,9 @@ input:focus, textarea:focus { border-color: var(--red); box-shadow: 0 0 0 3px rg
   .step-number { margin-bottom: 16px; }
   .cta-panel { padding: 42px 20px; }
   .custom-panel { padding: 28px; }
+  .complementary-section { padding-top: 60px; }
+  .complementary-card { min-height: 0; padding: 24px; }
+  .complementary-card .button { width: 100%; margin-top: 28px; }
   .custom-panel, .footer-top { align-items: flex-start; flex-direction: column; }
   .form-grid { grid-template-columns: 1fr; }
   .field-full { grid-column: auto; }
