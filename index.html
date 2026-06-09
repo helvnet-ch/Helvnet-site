@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="css/style.css">
   <script src="js/main.js" defer></script>
 </head>
-<body>
+<body class="home-page">
   <a class="skip-link" href="#contenu">Aller au contenu</a>
   <header class="site-header">
     <div class="container header-inner">
@@ -29,6 +29,7 @@
         <p class="hero-copy">On crée et on gère votre présence professionnelle en ligne: site, Google, réputation. Vous ne touchez à rien. Vous vous concentrez sur votre métier.</p>
         <div class="actions"><a class="button button-primary" href="contact.html#audit">Demander un audit gratuit</a><a class="button" href="services.html">Voir les offres</a></div>
       </div>
+      <a class="mobile-discover" href="#offres-mobile"><span>Découvrir</span><i aria-hidden="true"></i></a>
     </section>
     <section class="stats" aria-label="Les avantages Helvnet">
       <div class="container stats-grid">
@@ -37,13 +38,18 @@
         <div class="stat" data-reveal><strong>A à Z</strong><span>site, Google et réputation entièrement gérés</span></div>
       </div>
     </section>
-    <section class="section">
+    <section class="section offers-section" id="offres-mobile">
       <div class="container">
         <div class="section-header" data-reveal><p class="eyebrow">Nos offres</p><h2>Trois formules. Une présence gérée.</h2><p>Un abonnement mensuel clair. Pas de frais cachés, pas de technique à gérer de votre côté.</p></div>
-        <div class="cards">
+        <div class="cards mobile-carousel" data-carousel aria-label="Formules Helvnet">
           <article class="offer-card" data-reveal><h3>Starter</h3><p class="price">49 <small>CHF/mois</small></p><p class="offer-description">Une présence simple et professionnelle pour démarrer.</p><ul class="feature-list"><li>Site une page</li><li>Hébergement inclus</li><li>Formulaire de contact</li><li>Adapté mobile</li><li>Mise en ligne complète</li></ul><a class="button" href="contact.html?offre=starter">Choisir Starter</a></article>
           <article class="offer-card featured" data-reveal><span class="tag">Le plus choisi</span><h3>Essentiel</h3><p class="price">79 <small>CHF/mois</small></p><p class="offer-description">Une présence complète, gérée pour vous.</p><ul class="feature-list"><li>Site jusqu’à 4 pages</li><li>Google Business mis en place et optimisé</li><li>Hébergement inclus</li><li>1 modification par mois</li><li>Support technique</li></ul><a class="button button-primary" href="contact.html?offre=essentiel">Choisir Essentiel</a></article>
           <article class="offer-card" data-reveal><h3>Confort</h3><p class="price">129 <small>CHF/mois</small></p><p class="offer-description">Tout géré, zéro souci, suivi continu.</p><ul class="feature-list"><li>Tout l’Essentiel</li><li>3 modifications par mois</li><li>Google Business géré en continu</li><li>Avis, photos et horaires à jour</li><li>Support prioritaire</li></ul><a class="button" href="contact.html?offre=confort">Choisir Confort</a></article>
+        </div>
+        <div class="carousel-dots mobile-only" data-carousel-dots aria-label="Navigation des formules">
+          <button class="carousel-dot is-active" type="button" aria-label="Voir Starter" aria-current="true"></button>
+          <button class="carousel-dot" type="button" aria-label="Voir Essentiel"></button>
+          <button class="carousel-dot" type="button" aria-label="Voir Confort"></button>
         </div>
       </div>
     </section>
