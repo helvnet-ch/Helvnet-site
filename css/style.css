@@ -340,6 +340,100 @@ input:focus, textarea:focus { border-color: var(--red); box-shadow: 0 0 0 3px rg
   .actions .button { width: 100%; }
 }
 
+/* Tablettes et mobiles: même rythme premium, avec moins de hauteur inutile. */
+@media (max-width: 768px) {
+  .hero, .page-hero { padding: 52px 0 44px; }
+  .section { padding: 52px 0; }
+  .section-tight { padding: 42px 0; }
+  .section-header { margin-bottom: 28px; }
+  .cards { gap: 22px; }
+  .offer-card { padding: 22px; }
+  .feature-list { margin-bottom: 20px; }
+  .feature-list li { padding-block: 6px; }
+  .offer-meta { margin-bottom: 20px; }
+  .complementary-section { padding-top: 52px; }
+}
+
+/* Petits mobiles (~390px): proportions volontairement plus compactes. */
+@media (max-width: 480px) {
+  .container { width: min(calc(100% - 24px), var(--container)); }
+  .hero, .page-hero { padding: 42px 0 38px; }
+  .hero h1 {
+    font-size: clamp(1.25rem, 5.4vw, 1.55rem);
+    line-height: 1.1;
+    letter-spacing: -.035em;
+  }
+  .page-hero h1 {
+    font-size: clamp(1.55rem, 6.4vw, 1.85rem);
+    line-height: 1.08;
+  }
+  .hero-copy, .page-lead {
+    max-width: 100%;
+    margin-top: 16px;
+    color: #a8a8a8;
+    font-size: clamp(.78rem, 3.25vw, .84rem);
+    line-height: 1.5;
+  }
+  .eyebrow {
+    gap: 10px;
+    margin-bottom: 15px;
+    font-size: .58rem;
+    letter-spacing: .15em;
+  }
+  .eyebrow::before { width: 25px; height: 13px; }
+  .actions { gap: 10px; margin-top: 22px; }
+  .button {
+    min-height: 48px;
+    padding: 9px 16px;
+    font-size: .78rem;
+  }
+  .section { padding: 42px 0; }
+  .section-tight { padding: 36px 0; }
+  .section-header { margin-bottom: 24px; }
+  .section-header p:not(.eyebrow) {
+    margin-top: 12px;
+    font-size: .82rem;
+    line-height: 1.55;
+  }
+  h2 {
+    font-size: clamp(1.15rem, 4.8vw, 1.3rem);
+    line-height: 1.13;
+  }
+  h3 { font-size: 1.05rem; }
+  .stats-grid { gap: 0; }
+  .stat, .stat:first-child { padding: 18px; }
+  .stat strong { font-size: 1.55rem; }
+  .stat span { margin-top: 5px; font-size: .75rem; }
+  .cards { gap: 18px; }
+  .offer-card { padding: 20px; }
+  .price {
+    margin-top: 13px;
+    font-size: clamp(1.3rem, 5.2vw, 1.45rem);
+  }
+  .price small { font-size: .66rem; }
+  .offer-description {
+    min-height: 0;
+    margin: 10px 0 14px;
+    font-size: .76rem;
+    line-height: 1.5;
+  }
+  .feature-list { margin-bottom: 16px; }
+  .feature-list li {
+    padding-block: 5px;
+    font-size: .75rem;
+    line-height: 1.4;
+  }
+  .feature-list li::before { margin-right: 8px; }
+  .offer-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 16px; }
+  .offer-meta div { padding: 11px; }
+  .offer-meta strong { font-size: .6rem; }
+  .offer-meta span { font-size: .64rem; }
+  .offer-card .button { min-height: 48px; }
+  .custom-panel { padding: 22px; }
+  .complementary-section { padding-top: 42px; }
+  .complementary-card { padding: 20px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
