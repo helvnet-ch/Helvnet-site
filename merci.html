@@ -10,31 +10,31 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <script src="js/main.js" defer></script>
 </head>
-<body>
+<body class="no-mobile-action">
   <a class="skip-link" href="#contenu">Aller au contenu</a>
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="index.html" aria-label="Helvnet, accueil"><img src="assets/logo.svg" alt="Helvnet" width="190" height="38"></a>
-      <a class="button" href="index.html">Retour à l’accueil</a>
+      <a class="button button-secondary header-back" href="index.html">Accueil</a>
     </div>
   </header>
   <main id="contenu">
     <section class="page-hero">
-      <div class="container" data-reveal>
+      <div class="container narrow" data-reveal>
         <p class="eyebrow">Message envoyé</p>
-        <h1 class="page-title"><span>Merci pour votre demande.</span><span class="title-accent">Nous revenons vers vous rapidement.</span></h1>
-        <p class="page-lead">Votre message a bien été transmis à Helvnet. Une copie est conservée dans les soumissions Netlify.</p>
+        <h1>Merci pour votre demande.</h1>
+        <p class="page-lead">Votre message a bien été transmis à Helvnet. Nous revenons vers vous rapidement pour parler de votre projet.</p>
         <div class="actions"><a class="button button-primary" href="index.html">Revenir à l’accueil</a></div>
       </div>
     </section>
   </main>
   <footer class="site-footer">
-    <div class="container">
-      <div class="footer-top"><a class="brand" href="index.html"><img src="assets/logo.svg" alt="Helvnet" width="190" height="38"></a></div>
+    <div class="container footer-inner">
+      <a class="brand" href="index.html"><img src="assets/logo.svg" alt="Helvnet" width="190" height="38"></a>
       <p class="copyright">© <span data-year></span> Helvnet.</p>
     </div>
   </footer>
