@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menu complet — Projet Restaurant Grill</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a href="index.html" class="logo-box" aria-label="Projet Restaurant Grill">
+    </a>
+
+    <nav class="nav-links">
+      <a href="index.html">Accueil</a>
+      <a href="menu.html">Menu</a>
+      <a href="apropos.html">À propos</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+
+    <div class="nav-cta">
+      <div class="phone">026 565 31 41</div>
+      <a class="btn" href="tel:+41265653141">Réserver</a>
+    </div>
+  </div>
+</header>
+
+
+<main>
+  <section class="menu-hero">
+    <div class="container">
+      <div class="kicker">Carte des mets</div>
+      <h1>Menu complet</h1>
+      <p>Grillades au feu de bois, röstisburgers, fondue BBQ, coin végé, planchettes et menu enfant.</p>
+    </div>
+  </section>
+
+  <div class="menu-tabs">
+    <div class="container tabs-inner">
+      <button class="tab active" data-target="all">Tout le menu</button>
+      <button class="tab" data-target="entrees">Entrées</button>
+      <button class="tab" data-target="burgers">Röstisburgers</button>
+      <button class="tab" data-target="cheminee">Cheminée</button>
+      <button class="tab" data-target="vege">Végé</button>
+      <button class="tab" data-target="fondue">Fondue</button>
+      <button class="tab" data-target="autres">Autres</button>
+      <button class="tab" data-target="enfants">Enfants</button>
+      <button class="tab" data-target="infos">Infos</button>
+    </div>
+  </div>
+
+  
+<section class="menu-board">
+  <div class="container">
+
+    <div class="menu-layout">
+
+      <div class="menu-column">
+        <article class="menu-panel" data-category="entrees">
+          <div class="panel-title"><h2>Les entrées</h2></div>
+          <table class="size-table">
+            <tr><th></th><th>Petite</th><th>Grande</th></tr>
+            <tr><td>Salade verte</td><td>8.50</td><td>16.00</td></tr>
+            <tr><td>Salade mêlée</td><td>9.50</td><td>18.00</td></tr>
+            <tr><td>Le pain grillé aux champignons et salade mixte</td><td>14.50</td><td>23.50</td></tr>
+          </table>
+        </article>
+
+        <article class="menu-panel" data-category="burgers">
+          <div class="panel-title"><h2>Les röstisburgers</h2><small>Galettes de röstis maison, fromage à raclette, tomate, compote et pousses d’oignons, bacon, salade mixte, tortillas</small></div>
+          <div class="menu-item"><div class="item-row"><div><div class="item-name">Bavette de bœuf au feu de bois</div></div><div class="price">27.00</div></div></div>
+          <div class="menu-item"><div class="item-row"><div><div class="item-name">Poitrine de poulet au feu de bois</div></div><div class="price">26.00</div></div></div>
+          <div class="menu-item"><div class="item-row"><div><div class="item-name">Effiloché de porc du smoker</div></div><div class="price">27.00</div></div></div>
+          <div class="menu-item"><div class="item-row"><div><div class="item-name">Version méga</div></div><div class="price">36.50</div></div></div>
+          <div class="menu-item"><div class="item-row"><div><div class="item-name">Mix des viandes</div></div><div class="price">+3.00</div></div></div>
+          <div class="menu-item"><div class="item-row"><div><div class="item-name">Version sans gluten</div></div><div class="price">+2.00</div></div></div>
+        </article>
+
+        <article class="menu-panel" data-category="vege">
+          <div class="panel-title"><h2>Le coin végé</h2></div>
+          <div class="menu-item"><div class="item-row"><div><div class="item-name">RöstisBurger végé</div><div class="item-desc">Légumes grillés au feu de bois</div></div><div class="price">25.00</div></div></div>
+          <div class="menu-item"><div class="item-row"><div><div class="item-name">Brochette de légumes</div><div class="item-desc">Au feu de bois, frites, sauce à choix</div></div><div class="price">27.00</div></div></div>
+        </article>
+
+        <article class="menu-panel" data-category="autres">
+          <div class="panel-title"><h2>Les planchettes Apér’Aude</h2></div>
+          <div class="menu-item"><div class="item-row"><div class="item-name">Petite</div><div class="price">24.00</div></div></div>
+          <div class="menu-item"><div class="item-row"><div class="item-name">Grande</div><div class="price">35.00</div></div></div>
+        </article>
+
+        <article class="menu-panel" data-category="enfants">
+          <div class="panel-title"><h2>Pour les petits</h2><small>Jusqu’à 11 ans</small></div>
+          <div class="menu-item"><div class="item-row"><div class="item-name">Mini poulet frites légumes</div><div class="price">13.00</div></div></div>
+          <div class="menu-item"><div class="item-row"><div class="item-name">Mini steak frites légumes</div><div class="price">14.00</div></div></div>
+          <div class="menu-item"><div class="item-row"><div class="item-name">Petite portion de frites</div><div class="price">5.50</div></div></div>
+          <div class="menu-item"><div class="item-row"><div class="item-name">Grande portion de frites</div><div class="price">7.50</div></div></div>
+          <div class="menu-item"><div class="item-name">Fondue enfant</div><div class="item-desc">Nous vous conseillons volontiers</div></div>
+        </article>
+      </div>
+
+      <div class="menu-column">
+        <div class="cheminee-wrapper">
+          <article class="menu-panel" data-category="cheminee">
+            <div class="panel-title"><h2>À la cheminée</h2></div>
+
+            <details open>
+              <summary>Entrecôte de cheval</summary>
+              <div class="details-content">
+                <table class="size-table"><tr><td>200g</td><td>36.00</td></tr><tr><td>250g</td><td>38.00</td></tr><tr><td>400g</td><td>50.00</td></tr></table>
+              </div>
+            </details>
+
+            <details>
+              <summary>Entrecôte de bœuf</summary>
+              <div class="details-content">
+                <table class="size-table"><tr><td>200g</td><td>40.00</td></tr><tr><td>250g</td><td>42.00</td></tr><tr><td>400g</td><td>54.00</td></tr></table>
+              </div>
+            </details>
+
+            <details>
+              <summary>Entrecôte de kangourou</summary>
+              <div class="details-content">
+                <table class="size-table"><tr><td>200g</td><td>36.00</td></tr><tr><td>250g</td><td>38.00</td></tr><tr><td>400g</td><td>50.00</td></tr></table>
+              </div>
+            </details>
+
+            <details>
+              <summary>Carré de porc</summary>
+              <div class="details-content">
+                <table class="size-table"><tr><td>200g</td><td>34.00</td></tr><tr><td>250g</td><td>35.00</td></tr><tr><td>400g</td><td>47.00</td></tr></table>
+              </div>
+            </details>
+
+            <details>
+              <summary>Poitrine de poulet</summary>
+              <div class="details-content">
+                <table class="size-table"><tr><td>200g</td><td>30.00</td></tr><tr><td>250g</td><td>32.00</td></tr><tr><td>400g</td><td>44.00</td></tr></table>
+              </div>
+            </details>
+
+            <p class="note">Accompagné de légumes du jour, frites ou proposition du jour. Sauce au choix : herbes, champignons, airelles, bacon et gin. 2ème supplément de sauce : 3.50</p>
+          </article>
+
+          <article class="menu-panel compact-panel" data-category="cheminee">
+            <div class="panel-title"><h2>Les côtes de bœuf</h2></div>
+            <div class="menu-item">
+              <div class="item-name">À la cheminée, beurre à l’ail romarin, frites et légumes</div>
+              <div class="item-desc">Race selon arrivage. Prix selon poids des pièces disponibles.</div>
+            </div>
+          </article>
+        </div>
+
+        <article class="menu-panel" data-category="fondue">
+          <div class="panel-title"><h2>La fondue BBQ à gogo</h2><small>Minimum 2 personnes</small></div>
+          <div class="menu-item">
+            <div class="item-name">Cheval, bœuf, kangourou, poulet et porc</div>
+            <div class="item-desc">Frites et 5 mayo maison. Bouillon au vin rouge et petits légumes.</div>
+          </div>
+          <div class="menu-item"><div class="item-row"><div class="item-name">Par personne</div><div class="price">40.00</div></div></div>
+          <div class="menu-item"><div class="item-row"><div><div class="item-name">Nouilles chinoises</div><div class="item-desc">Les nouilles ne sont pas à gogo</div></div><div class="price">2.50</div></div></div>
+        </article>
+
+        <article class="menu-panel" data-category="autres">
+          <div class="panel-title"><h2>Aussi au feu de bois</h2></div>
+          <div class="menu-item"><div class="item-row"><div><div class="item-name">Le RoastHorse à la cheminée</div><div class="item-desc">Frites et salade</div></div><div class="price">32.00</div></div></div>
+          <div class="menu-item"><div class="item-row"><div><div class="item-name">Filet de pangolin</div><div class="item-desc">Hihi, mais non, on rigole. Projet Restaurant Grill a le sens de l’humour...</div></div><div class="price"></div></div></div>
+          <div class="menu-item"><div class="item-row"><div><div class="item-name">L’effiloché de porc du smoker</div><div class="item-desc">Frites et salade</div></div><div class="price">24.50</div></div></div>
+        </article>
+
+        
+      </div>
+    </div>
+
+    <div class="info-section" data-info-section>
+      <article class="menu-panel" data-category="infos">
+        <div class="panel-title"><h2>Infos utiles</h2></div>
+        <div class="menu-item"><div class="item-name">Allergies & intolérances</div><div class="item-desc">Sur demande, nos collaborateurs vous communiquent volontiers des informations sur les mets qui peuvent déclencher des allergies ou des intolérances.</div></div>
+        <div class="menu-item"><div class="item-name">Prix</div><div class="item-desc">Tous nos prix sont indiqués en CHF et TVA 8.1% incluse.</div></div>
+        <div class="menu-item"><div class="item-name">Paiements</div><div class="item-desc">Les paiements par carte et Twint sont acceptés dès 30 CHF.</div></div>
+        <div class="menu-item"><div class="item-name">Réseaux sociaux</div><div class="item-desc">Suivez-nous sur les réseaux sociaux et partagez votre expérience avec vos amis.</div></div>
+      </article>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+
+<footer class="footer">
+  <div class="container">
+    <p>© Projet Restaurant Grill · Grand-Rue 67, 1630 Bulle · 026 565 31 41</p>
+  </div>
+</footer>
+<a class="btn mobile-call" href="tel:+41265653141">Réserver maintenant</a>
+<script src="assets/js/main.js"></script>
+
+</body>
+</html>

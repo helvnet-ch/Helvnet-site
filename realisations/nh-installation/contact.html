@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr-CH">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Contact et demande de devis | NH installation</title>
+    <meta name="description" content="Contactez NH installation &agrave; Fribourg pour une demande de devis &eacute;lectrique, un d&eacute;pannage, une r&eacute;novation, de l'&eacute;clairage ou un tableau &eacute;lectrique.">
+    <link rel="icon" href="public/images/favicon.png" type="image/png">
+    <link rel="apple-touch-icon" href="public/images/favicon.png">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html" aria-label="Accueil NH installation"><span class="brand-mark"><img src="public/images/nh-mark-transparent.png" alt="Logo NH installation"></span><span><span class="brand-name">NH installation</span><span class="brand-region">&Eacute;lectricit&eacute; &agrave; Fribourg</span></span></a>
+        <nav class="desktop-nav" aria-label="Navigation principale"><a href="services.html">Services</a><a href="realisations.html">R&eacute;alisations</a><a href="a-propos.html">&Agrave; propos</a><a href="contact.html">Contact</a></nav>
+        <div class="header-actions"><a class="phone-link" href="tel:+41798852795">079 885 27 95</a><a class="button primary" href="#devis">Demander un devis &rarr;</a></div>
+        <button class="menu-toggle" data-menu-toggle type="button" aria-label="Ouvrir le menu" aria-expanded="false">&#9776;</button>
+      </div>
+      <nav class="mobile-nav" data-mobile-nav aria-label="Navigation mobile"><a href="services.html">Services</a><a href="realisations.html">R&eacute;alisations</a><a href="a-propos.html">&Agrave; propos</a><a href="contact.html">Contact</a><a href="tel:+41798852795">079 885 27 95</a></nav>
+    </header>
+
+    <main>
+      <section class="page-hero contact-simple-hero">
+        <div class="container"><h1>Contact.</h1><p class="page-text">Un d&eacute;pannage, une r&eacute;novation ou une installation &agrave; pr&eacute;voir ? Envoyez votre demande en quelques lignes.</p></div>
+      </section>
+
+      <section class="contact-clear" id="devis">
+        <div class="container contact-clear-grid">
+          <aside class="contact-info-panel">
+            <h2>Coordonn&eacute;es.</h2>
+            <div class="contact-lines">
+              <p><span>Contact</span>Herv&eacute; Nsingi</p>
+              <a href="tel:+41798852795"><span>T&eacute;l&eacute;phone</span>079 885 27 95</a>
+              <a href="mailto:contact@nh-installation.ch"><span>E-mail</span>contact@nh-installation.ch</a>
+              <a href="https://wa.me/41798852795?text=Bonjour%20NH%20installation%2C%20je%20souhaite%20obtenir%20un%20devis%20pour%20un%20projet%20%C3%A9lectrique." target="_blank" rel="noopener noreferrer"><span>WhatsApp</span>Envoyer un message</a>
+            </div>
+            <p class="contact-note">Interventions &agrave; Fribourg, Vaud et Valais.</p>
+            <p class="contact-ide">IDE: CHE-417.853.875</p>
+          </aside>
+
+          <form class="contact-form clean-form" name="demande-devis" method="POST" action="/contact" data-netlify="true" netlify-honeypot="bot-field" data-quote-form>
+            <input type="hidden" name="form-name" value="demande-devis">
+            <p hidden><label>Ne pas remplir<input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+            <div class="form-heading"><h2>Devis.</h2><p>Ajoutez la commune, le type de bien et le d&eacute;lai souhait&eacute;.</p></div>
+            <div class="form-row"><label>Nom<input required name="nom" autocomplete="name"></label><label>T&eacute;l&eacute;phone<input required name="telephone" type="tel" autocomplete="tel"></label></div>
+            <div class="form-row"><label>E-mail<input required name="email" type="email" autocomplete="email"></label><label>Commune<input required name="commune" autocomplete="address-level2"></label></div>
+            <div class="form-row">
+              <label>Type de demande
+                <select name="service"><option>Installations &eacute;lectriques</option><option>D&eacute;pannage</option><option>R&eacute;novation</option><option>&Eacute;clairage</option><option>Tableaux &eacute;lectriques</option></select>
+              </label>
+              <label>D&eacute;lai souhait&eacute;
+                <select name="delai"><option>&Agrave; d&eacute;finir</option><option>Urgent</option><option>Dans les 2 semaines</option><option>Dans le mois</option><option>Projet &agrave; planifier</option></select>
+              </label>
+            </div>
+            <label>Message<textarea required name="message" placeholder="Adresse ou commune, type de bien, travaux souhait&eacute;s, photos disponibles..."></textarea></label>
+            <div class="form-actions"><button class="button primary" type="submit">Envoyer la demande</button><button class="button secondary dark-text" type="button" data-whatsapp-submit>WhatsApp</button></div>
+            <p class="form-note">La demande est transmise via le formulaire s&eacute;curis&eacute; du site. Pour un &eacute;change direct, utilisez le bouton WhatsApp.</p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer"><div class="footer-bottom"><div class="container"><span>&copy; 2026 NH installation. IDE: CHE-417.853.875</span><span>Contact: Herv&eacute; Nsingi · <a href="mailto:contact@nh-installation.ch">contact@nh-installation.ch</a></span></div></div></footer>
+    <script src="script.js"></script>
+  </body>
+</html>

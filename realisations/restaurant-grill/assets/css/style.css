@@ -1,0 +1,1173 @@
+:root{
+  --black:#080605;
+  --black-2:#12100e;
+  --cream:#efe3d2;
+  --cream-2:#f8efe3;
+  --paper:#f3eadf;
+  --ink:#15110e;
+  --muted:#7a6758;
+  --gold:#b07a4b;
+  --gold-2:#d29a61;
+  --line:rgba(21,17,14,.18);
+  --line-dark:rgba(255,255,255,.12);
+  --radius:22px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family: Arial, sans-serif;
+  background:var(--black);
+  color:#fff;
+  line-height:1.55;
+}
+a{color:inherit;text-decoration:none}
+.container{width:min(1220px,92vw);margin:auto}
+
+/* HEADER V3 BLANC */
+.nav{
+  position:fixed;
+  top:0;left:0;right:0;
+  z-index:50;
+  background:rgba(248,239,227,.97);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(21,17,14,.16);
+  box-shadow:0 14px 45px rgba(0,0,0,.12);
+}
+.nav-inner{
+  height:92px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.logo-box{
+  background:#fff;
+  color:#111;
+  min-width:132px;
+  height:92px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  border-inline:1px solid rgba(21,17,14,.14);
+}
+.logo-main{
+  font-family:Georgia,serif;
+  font-size:26px;
+  font-weight:900;
+  line-height:.9;
+  text-align:center;
+}
+.logo-sub{
+  margin-top:6px;
+  font-size:10px;
+  font-style:italic;
+}
+.nav-links{
+  display:flex;
+  gap:44px;
+  font-size:13px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  font-weight:800;
+}
+.nav-links a{color:#15110e}
+.nav-links a:hover,.nav-links a.active{color:var(--gold)}
+.nav-cta{
+  display:flex;
+  align-items:center;
+  gap:20px;
+}
+.phone{color:#15110e;font-weight:900}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:14px 25px;
+  border:1px solid rgba(21,17,14,.18);
+  background:linear-gradient(135deg,#8e4f2e,#c78350);
+  color:#fff;
+  font-weight:800;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  font-size:13px;
+  transition:.2s;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn.light{
+  background:transparent;
+  border:1px solid rgba(255,255,255,.45);
+}
+
+/* HOME */
+.hero{
+  min-height:94vh;
+  padding-top:130px;
+  display:flex;
+  align-items:center;
+  text-align:center;
+  background:
+    linear-gradient(rgba(8,6,5,.55),rgba(8,6,5,.9)),
+    url("https://images.unsplash.com/photo-1558030006-450675393462?q=80&w=2200&auto=format&fit=crop");
+  background-size:cover;
+  background-position:center;
+}
+.kicker{
+  color:var(--gold-2);
+  text-transform:uppercase;
+  letter-spacing:3px;
+  font-weight:900;
+  font-size:12px;
+  margin-bottom:18px;
+  text-align:center;
+}
+h1,h2,h3{font-family:Georgia,serif}
+.hero h1{
+  font-size:clamp(58px,9vw,126px);
+  line-height:.88;
+  letter-spacing:-4px;
+  max-width:980px;
+  margin:0 auto 24px;
+}
+.hero p{
+  color:#ead8c9;
+  font-size:20px;
+  max-width:720px;
+  margin:0 auto 34px;
+}
+.hero-actions{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+
+.section{padding:96px 0}
+.section.paper{
+  background:var(--paper);
+  color:var(--ink);
+}
+.section-head{
+  text-align:center;
+  max-width:850px;
+  margin:0 auto 50px;
+}
+.section-head h2{
+  font-size:clamp(40px,6vw,76px);
+  line-height:.95;
+  letter-spacing:-2px;
+  margin-bottom:16px;
+}
+.section-head p{
+  color:var(--muted);
+  font-size:18px;
+}
+
+.home-story{
+  background:var(--paper);
+  color:var(--ink);
+}
+.home-story-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+  align-items:stretch;
+}
+.home-story-card{
+  min-height:430px;
+  border-radius:var(--radius);
+  padding:42px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  text-align:center;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.58);
+}
+.home-story-card h2{
+  font-size:clamp(38px,5vw,68px);
+  line-height:.95;
+  letter-spacing:-2px;
+  margin-bottom:18px;
+}
+.home-story-card p{
+  color:var(--muted);
+  font-size:18px;
+  margin-bottom:14px;
+}
+.home-story-photo{
+  min-height:430px;
+  border-radius:var(--radius);
+  border:1px solid var(--line);
+  background:
+    linear-gradient(rgba(8,6,5,.05),rgba(8,6,5,.16)),
+    url("https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?q=80&w=1500&auto=format&fit=crop");
+  background-size:cover;
+  background-position:center;
+}
+.home-highlights{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+  margin-top:22px;
+}
+.home-highlight{
+  border:1px solid var(--line);
+  background:#fff8f0;
+  border-radius:18px;
+  padding:24px;
+  text-align:center;
+}
+.home-highlight h3{
+  font-size:25px;
+  margin-bottom:8px;
+}
+.home-highlight p{color:var(--muted)}
+
+/* MENU */
+.menu-hero{
+  padding:160px 0 60px;
+  text-align:center;
+  background:
+    linear-gradient(rgba(8,6,5,.62),rgba(8,6,5,.82)),
+    url("https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=2200&auto=format&fit=crop");
+  background-size:cover;
+  background-position:center;
+}
+.menu-hero h1{
+  font-size:clamp(58px,8vw,112px);
+  line-height:.9;
+  letter-spacing:-3px;
+}
+.menu-hero p{
+  color:#ead8c9;
+  font-size:19px;
+  max-width:720px;
+  margin:16px auto 0;
+}
+.menu-tabs{
+  position:sticky;
+  top:92px;
+  z-index:20;
+  background:rgba(239,227,210,.95);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.tabs-inner{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+  padding:16px 0;
+}
+.tab{
+  cursor:pointer;
+  border:1px solid var(--line);
+  background:transparent;
+  padding:11px 16px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-size:12px;
+}
+.tab.active,.tab:hover{
+  background:#111;
+  color:white;
+}
+.menu-board{
+  background:var(--paper);
+  color:var(--ink);
+  padding:48px 0 80px;
+}
+.menu-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:22px;
+  align-items:start;
+}
+.menu-panel{
+  background:rgba(255,255,255,.5);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:28px;
+  box-shadow:0 20px 60px rgba(25,15,8,.06);
+}
+.menu-panel.hidden{display:none}
+.panel-title{
+  text-align:center;
+  margin-bottom:22px;
+  border-bottom:1px solid var(--line);
+  padding-bottom:12px;
+}
+.panel-title h2{
+  font-size:30px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+.panel-title small{
+  color:var(--muted);
+  font-weight:700;
+  text-transform:uppercase;
+}
+.menu-item{
+  padding:12px 0;
+  border-bottom:1px dotted rgba(21,17,14,.35);
+}
+.menu-item:last-child{border-bottom:0}
+.item-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:18px;
+  align-items:start;
+}
+.item-name{font-weight:900}
+.item-desc{
+  color:var(--muted);
+  font-size:14px;
+  margin-top:3px;
+}
+.price{
+  font-weight:900;
+  white-space:nowrap;
+}
+.size-table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+  font-size:14px;
+}
+.size-table th,.size-table td{
+  padding:8px;
+  border-bottom:1px dotted rgba(21,17,14,.35);
+  text-align:right;
+}
+.size-table th:first-child,.size-table td:first-child{text-align:left}
+.note{
+  margin-top:16px;
+  color:var(--muted);
+  font-size:14px;
+  text-align:center;
+}
+details{
+  margin-top:14px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff8f0;
+  overflow:hidden;
+}
+summary{
+  cursor:pointer;
+  padding:14px 16px;
+  font-weight:900;
+  text-align:center;
+}
+.details-content{
+  padding:0 16px 16px;
+  color:var(--muted);
+  text-align:center;
+}
+
+/* Côte de boeuf compact */
+.compact-panel{
+  align-self:start;
+  min-height:auto;
+}
+.compact-panel .panel-title{margin-bottom:8px}
+.compact-panel .menu-item{padding:8px 0}
+.compact-panel .item-name,
+.compact-panel .item-desc{
+  text-align:center;
+  max-width:520px;
+  margin-inline:auto;
+}
+
+/* ABOUT */
+.about-split{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:26px;
+  align-items:center;
+}
+.about-copy{text-align:center}
+.about-copy h2{
+  font-size:clamp(38px,5vw,68px);
+  line-height:.96;
+  letter-spacing:-2px;
+  margin-bottom:18px;
+}
+.about-copy p{
+  color:#d9c8b7;
+  font-size:18px;
+  margin-bottom:14px;
+}
+.about-photo{
+  min-height:480px;
+  border-radius:var(--radius);
+  border:1px solid var(--line-dark);
+  background:
+    linear-gradient(rgba(8,6,5,.05),rgba(8,6,5,.18)),
+    url("https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1500&auto=format&fit=crop");
+  background-size:cover;
+  background-position:center;
+}
+.about-photo.second{
+  background:
+    linear-gradient(rgba(8,6,5,.05),rgba(8,6,5,.18)),
+    url("https://images.unsplash.com/photo-1432139555190-58524dae6a55?q=80&w=1500&auto=format&fit=crop");
+  background-size:cover;
+  background-position:center;
+}
+
+/* CONTACT */
+.contact-band{
+  background:
+    linear-gradient(rgba(8,6,5,.76),rgba(8,6,5,.92)),
+    url("https://images.unsplash.com/photo-1556269923-e4ef51d69638?q=80&w=2200&auto=format&fit=crop");
+  background-size:cover;
+  background-position:center;
+}
+.contact-grid{
+  display:grid;
+  grid-template-columns:.9fr 1.1fr;
+  gap:24px;
+}
+.contact-card{
+  border:1px solid var(--line-dark);
+  background:rgba(255,255,255,.08);
+  border-radius:var(--radius);
+  padding:34px;
+  text-align:center;
+}
+.contact-card h2{
+  font-size:44px;
+  margin-bottom:16px;
+}
+.info-line{
+  padding:16px 0;
+  border-bottom:1px solid var(--line-dark);
+  color:#dbc9b8;
+}
+.info-line strong{
+  display:block;
+  color:#fff;
+}
+.map{
+  min-height:460px;
+  border-radius:var(--radius);
+  overflow:hidden;
+  border:1px solid var(--line-dark);
+}
+.map iframe{width:100%;height:100%;border:0}
+
+.footer{
+  background:#050403;
+  border-top:1px solid var(--line-dark);
+  padding:32px 0;
+  color:#9f8977;
+  text-align:center;
+  font-size:14px;
+}
+.mobile-call{display:none}
+
+@media(max-width:960px){
+  .nav-inner{height:82px}
+  .logo-box{height:82px;min-width:105px}
+  .logo-main{font-size:20px}
+  .logo-sub{display:none}
+  .nav-links{display:none}
+  .phone{display:none}
+  .menu-tabs{top:82px}
+  .home-story-grid,.home-highlights,.menu-grid,.about-split,.contact-grid{
+    grid-template-columns:1fr;
+  }
+  .hero{padding-top:120px}
+  .section{padding:72px 0}
+  .mobile-call{
+    display:flex;
+    position:fixed;
+    left:14px;right:14px;bottom:14px;
+    z-index:80;
+  }
+  body{padding-bottom:74px}
+}
+
+/* V4 MENU ORGANISÉ + HEADER BLANC RENFORCÉ */
+.nav,
+.menu-tabs{
+  background:rgba(255,255,255,.96);
+}
+
+.logo-box{
+  background:#fff;
+  color:#000;
+}
+
+.nav-links a,
+.phone{
+  color:#000;
+}
+
+.nav-links a:hover,
+.nav-links a.active{
+  color:var(--gold);
+}
+
+.menu-board .container{
+  max-width:1280px;
+}
+
+/* Nouveau layout menu : blocs propres, pas dispatchés */
+.menu-layout{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:24px;
+  align-items:start;
+}
+
+.menu-column{
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+}
+
+.menu-panel{
+  width:100%;
+}
+
+/* Bloc cheminée + côte de boeuf mieux maîtrisé */
+.cheminee-wrapper{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:18px;
+}
+
+.compact-panel{
+  padding:24px;
+  max-width:none;
+}
+
+/* Infos utiles séparées en bas */
+.info-section{
+  margin-top:38px;
+  border-top:1px solid var(--line);
+  padding-top:34px;
+}
+
+.info-section .menu-panel{
+  max-width:920px;
+  margin:0 auto;
+  background:#fff8f0;
+}
+
+/* Quand on filtre sur Infos, on garde seulement la carte info visible */
+.info-section .menu-panel.hidden{
+  display:none;
+}
+
+/* Les panneaux masqués ne prennent aucune place */
+.menu-panel.hidden,
+.info-section.hidden{
+  display:none !important;
+}
+
+/* Harmonisation des cartes */
+.menu-panel{
+  break-inside:avoid;
+}
+
+.menu-panel .panel-title h2{
+  line-height:1.05;
+}
+
+.menu-item{
+  text-align:left;
+}
+
+.panel-title,
+.note,
+.details-content{
+  text-align:center;
+}
+
+@media(max-width:960px){
+  .menu-layout{
+    grid-template-columns:1fr;
+  }
+
+  .menu-column{
+    gap:18px;
+  }
+
+  .info-section .menu-panel{
+    max-width:100%;
+  }
+}
+
+
+/* V5 — vrai logo + écran de chargement */
+.logo-box{
+  background:#fff;
+  padding:8px 12px;
+}
+
+.logo-box img{
+  width:112px;
+  height:auto;
+  display:block;
+  object-fit:contain;
+}
+
+.logo-main,
+.logo-sub{
+  display:none;
+}
+
+#loader{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:opacity .75s ease, visibility .75s ease;
+}
+
+#loader.hide{
+  opacity:0;
+  visibility:hidden;
+}
+
+.loader-inner{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:26px;
+  animation:loaderAppear .8s ease forwards;
+}
+
+.loader-logo{
+  width:min(420px,72vw);
+  height:auto;
+  display:block;
+}
+
+.loader-line{
+  width:0;
+  height:2px;
+  background:#111;
+  animation:loaderLine 2.4s ease forwards;
+}
+
+@keyframes loaderAppear{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes loaderLine{
+  to{width:min(260px,54vw)}
+}
+
+@media(max-width:960px){
+  .logo-box img{
+    width:94px;
+  }
+
+  .loader-logo{
+    width:min(320px,78vw);
+  }
+}
+
+
+/* V6 — logo sur blanc pur, intégration propre */
+.logo-box{
+  background:#ffffff !important;
+  border-inline:1px solid rgba(21,17,14,.12);
+  box-shadow:none;
+  overflow:hidden;
+}
+
+.logo-box img{
+  background:#ffffff !important;
+  width:118px;
+  height:auto;
+  display:block;
+  object-fit:contain;
+  mix-blend-mode:normal;
+}
+
+#loader{
+  background:#ffffff !important;
+}
+
+.loader-logo{
+  background:#ffffff !important;
+}
+
+@media(max-width:960px){
+  .logo-box img{
+    width:96px;
+  }
+}
+
+
+/* V7 — navbar 100% blanche sur toute la largeur */
+.nav{
+  background:#ffffff !important;
+  border-bottom:1px solid rgba(0,0,0,.10) !important;
+  box-shadow:0 10px 34px rgba(0,0,0,.10) !important;
+}
+
+.nav-inner{
+  background:#ffffff !important;
+}
+
+.logo-box{
+  background:#ffffff !important;
+  border-inline:0 !important;
+  border-right:1px solid rgba(0,0,0,.08) !important;
+}
+
+.logo-box img{
+  background:#ffffff !important;
+}
+
+.nav-links a,
+.phone{
+  color:#111111 !important;
+}
+
+.nav-links a:hover,
+.nav-links a.active{
+  color:#9b6339 !important;
+}
+
+.nav .btn{
+  border:1px solid rgba(0,0,0,.12) !important;
+}
+
+/* la barre de filtres du menu reste aussi bien blanche */
+.menu-tabs{
+  background:#ffffff !important;
+  border-bottom:1px solid rgba(0,0,0,.10) !important;
+}
+
+
+/* V8 — cartes du menu mieux alignées et plus propres */
+.menu-layout,
+.menu-grid{
+  align-items:stretch !important;
+}
+
+.menu-column{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:22px !important;
+}
+
+.menu-panel{
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:flex-start !important;
+  height:auto !important;
+}
+
+.menu-panel h2,
+.menu-panel h3,
+.panel-title{
+  text-align:center !important;
+}
+
+.panel-title{
+  min-height:74px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Les cartes simples gardent une hauteur cohérente */
+.menu-panel:not(.compact-panel){
+  min-height:300px;
+}
+
+/* Petites cartes : évite les gros blocs vides */
+.compact-panel,
+.menu-panel[data-category="entrees"],
+.menu-panel[data-category="vege"],
+.menu-panel[data-category="autres"],
+.menu-panel[data-category="enfants"]{
+  min-height:auto !important;
+}
+
+/* Gros blocs : meilleur équilibre visuel */
+.menu-panel[data-category="cheminee"],
+.menu-panel[data-category="fondue"]{
+  min-height:440px;
+}
+
+/* Bloc infos utile reste séparé et propre */
+.info-section .menu-panel,
+.menu-panel[data-category="infos"]{
+  min-height:auto !important;
+}
+
+/* Items réguliers */
+.menu-item,
+.dish,
+.item{
+  min-height:56px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.item-row{
+  align-items:center !important;
+}
+
+/* Tables plus régulières */
+.size-table td,
+.size-table th{
+  vertical-align:middle;
+}
+
+/* Mobile : naturel, pas de hauteur forcée */
+@media(max-width:960px){
+  .menu-panel,
+  .menu-panel[data-category],
+  .compact-panel{
+    min-height:auto !important;
+  }
+
+  .panel-title{
+    min-height:auto !important;
+  }
+}
+
+
+/* V9 — placement demandé : enfants sous Apér’Aude + alignement colonne droite */
+
+/* Annule les hauteurs trop agressives de la V8 */
+.menu-panel:not(.compact-panel),
+.menu-panel[data-category="cheminee"],
+.menu-panel[data-category="fondue"],
+.menu-panel[data-category="entrees"],
+.menu-panel[data-category="vege"],
+.menu-panel[data-category="autres"],
+.menu-panel[data-category="enfants"]{
+  min-height:auto !important;
+}
+
+/* Garde les cartes naturelles */
+.menu-panel{
+  height:auto !important;
+}
+
+/* Pour les petits reste compact sous Apér’Aude */
+.menu-panel[data-category="enfants"]{
+  min-height:auto !important;
+}
+
+/* On allonge uniquement “Aussi au feu de bois” pour équilibrer la colonne */
+.menu-panel[data-category="autres"]:has(.panel-title h2){
+  min-height:auto;
+}
+
+/* Ciblage visuel du bloc Aussi au feu de bois */
+.menu-panel[data-category="autres"] .panel-title h2{
+  white-space:normal;
+}
+
+/* Si le navigateur supporte :has, on allonge seulement le bon bloc */
+.menu-panel[data-category="autres"]:has(h2:nth-child(1)),
+.menu-panel[data-category="autres"]:has(.panel-title h2){
+  /* fallback neutre, les vrais réglages ci-dessous */
+}
+
+/* Allongement manuel du bloc “Aussi au feu de bois” via son contenu */
+.menu-panel[data-category="autres"]:has(.item-name),
+.menu-panel[data-category="autres"]:has(.menu-item){
+  align-self:stretch;
+}
+
+/* Plus précis : le premier bloc Autres de la colonne droite */
+.menu-column:nth-child(2) .menu-panel[data-category="autres"]{
+  min-height:430px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:flex-start !important;
+}
+
+/* Mais la planchette Apér’Aude à gauche reste compacte */
+.menu-column:nth-child(1) .menu-panel[data-category="autres"]{
+  min-height:auto !important;
+}
+
+/* Ligne et titres propres */
+.panel-title{
+  min-height:auto !important;
+  padding-bottom:12px;
+  margin-bottom:16px;
+}
+
+/* Mobile : tout naturel */
+@media(max-width:960px){
+  .menu-column:nth-child(2) .menu-panel[data-category="autres"],
+  .menu-column:nth-child(1) .menu-panel[data-category="autres"]{
+    min-height:auto !important;
+  }
+}
+
+.logo-box img,
+.loader-logo {
+  display: none;
+}
+
+.logo-box::after,
+.loader-inner::before {
+  content: "Projet Restaurant Grill";
+  display: inline-flex;
+  align-items: center;
+  color: #fff;
+  font-weight: 900;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+
+.logo-box::after {
+  min-height: 54px;
+}
+
+.loader-inner::before {
+  justify-content: center;
+  min-height: 72px;
+  font-size: clamp(22px, 4vw, 38px);
+  text-align: center;
+}
+
+/* Showcase polish */
+.nav {
+  box-shadow: 0 14px 42px rgba(0,0,0,.16) !important;
+}
+
+.logo-box::after {
+  color: #111;
+  padding: 0 10px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.hero {
+  min-height: min(820px, 88svh);
+}
+
+.hero-actions .btn {
+  min-width: 154px;
+}
+
+.home-story-card,
+.home-story-photo,
+.home-highlight,
+.menu-panel,
+.contact-card,
+.map {
+  box-shadow: 0 18px 52px rgba(25,15,8,.08);
+}
+
+.home-highlight,
+.menu-panel,
+.contact-card {
+  transition: border-color .18s ease, transform .18s ease;
+}
+
+.home-highlight:hover,
+.menu-panel:hover,
+.contact-card:hover {
+  border-color: rgba(176,122,75,.34);
+}
+
+@media(max-width:760px){
+  body {
+    font-size: 14px;
+  }
+
+  .container {
+    width: min(100% - 28px, 1220px);
+  }
+
+  .nav-inner {
+    height: 66px;
+  }
+
+  .logo-box {
+    min-width: 0;
+    height: 66px;
+    padding: 0;
+    border-right: 0 !important;
+  }
+
+  .logo-box::after {
+    min-height: 40px;
+    max-width: 158px;
+    color: #111;
+    font-size: 11px;
+    line-height: 1.1;
+    letter-spacing: .08em;
+  }
+
+  .nav-cta {
+    gap: 0;
+  }
+
+  .nav-cta .btn {
+    min-height: 38px;
+    padding: 9px 12px;
+    font-size: 11px;
+  }
+
+  .hero,
+  .menu-hero {
+    min-height: auto;
+    padding: 92px 0 44px;
+  }
+
+  .hero h1,
+  .menu-hero h1,
+  .section-head h2,
+  .home-story-card h2,
+  .about-copy h2 {
+    font-size: clamp(34px, 10.5vw, 46px);
+    line-height: .98;
+    letter-spacing: 0;
+  }
+
+  .hero p,
+  .menu-hero p,
+  .section-head p,
+  .home-story-card p,
+  .about-copy p {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .hero-actions {
+    display: grid;
+    width: 100%;
+    max-width: 320px;
+    gap: 8px;
+    margin-inline: auto;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+  }
+
+  .section {
+    padding: 42px 0;
+  }
+
+  .section-head {
+    margin-bottom: 24px;
+  }
+
+  .home-story-grid,
+  .home-highlights,
+  .menu-layout,
+  .menu-grid,
+  .about-split,
+  .contact-grid {
+    gap: 12px;
+  }
+
+  .home-story-card,
+  .home-highlight,
+  .menu-panel,
+  .contact-card {
+    border-radius: 14px;
+    padding: 20px;
+  }
+
+  .home-story-card,
+  .home-story-photo,
+  .about-photo {
+    min-height: 250px;
+  }
+
+  .home-highlight {
+    text-align: left;
+  }
+
+  .home-highlight h3 {
+    font-size: 22px;
+  }
+
+  .menu-tabs {
+    top: 66px;
+    overflow-x: auto;
+  }
+
+  .tabs-inner {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 10px 14px;
+    scrollbar-width: none;
+  }
+
+  .tabs-inner::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab {
+    flex: 0 0 auto;
+    padding: 9px 12px;
+    font-size: 11px;
+  }
+
+  .panel-title {
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+  }
+
+  .panel-title h2 {
+    font-size: 24px;
+  }
+
+  .menu-item {
+    padding: 10px 0;
+  }
+
+  .item-row {
+    grid-template-columns: minmax(0,1fr) auto;
+    gap: 10px;
+  }
+
+  .item-name {
+    font-size: 14px;
+  }
+
+  .item-desc {
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .price {
+    font-size: 13px;
+  }
+
+  .map {
+    min-height: 260px;
+    border-radius: 14px;
+  }
+
+  .footer {
+    padding: 22px 0;
+    font-size: 12px;
+  }
+
+  .mobile-call {
+    min-height: 46px;
+    left: 12px;
+    right: 12px;
+    bottom: 10px;
+    width: auto;
+  }
+}
