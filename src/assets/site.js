@@ -6,9 +6,18 @@ if (quoteForm) {
   const name = quoteForm.elements.namedItem('name');
   const project = quoteForm.elements.namedItem('project');
   const axes = [...quoteForm.querySelectorAll('[name=axis]')];
-  const preferred = new URL(window.location.href).searchParams.get('axe');
-  const initialAxis = axes.find((axis) => axis.value === preferred);
-  if (initialAxis) initialAxis.checked = true;
+  const manual = quoteForm.querySelector('[data-manual-draft]');
+  const draftText = manual.querySelector('textarea');
+  const status = quoteForm.querySelector('[data-copy-status]');
+  let preferred;
+  function syncAxis() {
+    const next = new URL(window.location.href).searchParams.get('axe');
+    if (next === preferred) return;
+    preferred = next;
+    for (const axis of axes) axis.checked = axis.value === preferred;
+  }
+  syncAxis();
+  window.addEventListener('helvnet:quote', syncAxis);
 
   for (const axis of axes) {
     axis.addEventListener('change', () => {
@@ -23,7 +32,12 @@ if (quoteForm) {
     field.addEventListener('input', () => field.setCustomValidity(''));
   }
 
-  quoteForm.addEventListener('submit', (event) => {
+  quoteForm.addEventListener('input', () => {
+    status.textContent = '';
+    manual.hidden = true;
+  });
+
+  quoteForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     name.setCustomValidity(name.value.trim() ? '' : 'Indiquez votre nom.');
     project.setCustomValidity(project.value.trim() ? '' : 'Décrivez votre projet en quelques lignes.');
@@ -35,7 +49,7 @@ if (quoteForm) {
     const lines = [
       'Bonjour Diego,',
       '',
-      project.value.trim().replace(/\r?\n/g, '\r\n'),
+      project.value.trim(),
       '',
       `Nom : ${name.value.trim()}`,
       `E-mail : ${email}`,
@@ -43,8 +57,24 @@ if (quoteForm) {
     if (interests.length) lines.push(`Axes : ${interests.join(', ')}`);
     lines.push('', 'Merci,');
 
+    const message = lines.join('\n');
+    draftText.value = message;
+    manual.hidden = false;
+    if (event.submitter?.hasAttribute('data-copy-request')) {
+      try {
+        await navigator.clipboard.writeText(message);
+        status.textContent = `Demande copiée. Vous pouvez la coller dans un e-mail à ${draft.pathname}.`;
+      } catch {
+        status.textContent = 'Sélectionnez le brouillon pour le copier dans votre messagerie.';
+        draftText.focus();
+        draftText.select();
+      }
+      return;
+    }
+
     const subject = encodeURIComponent(draft.searchParams.get('subject'));
-    const body = encodeURIComponent(lines.join('\r\n'));
+    const body = encodeURIComponent(message.replace(/\n/g, '\r\n'));
+    status.textContent = 'Votre brouillon est aussi disponible ci-dessous.';
     window.location.assign(`mailto:${draft.pathname}?subject=${subject}&body=${body}`);
   });
 

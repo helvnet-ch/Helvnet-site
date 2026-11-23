@@ -1,11 +1,8 @@
 export const origin = 'https://helvnet.ch';
 export const contactEmail = 'contact@helvnet.ch';
 export const contactPath = '/contact/';
-export const projectPath = (slug) => `/projets/${slug}/`;
 
 const atelierPaths = [
-  '/services',
-  '/creation-site-web',
   '/reseaux-sociaux',
   '/identite-visuelle',
   '/photo-video',
@@ -19,13 +16,10 @@ export const redirects = new Map([
     [`${path}/`, '/#atelier'],
     [`${path}.html`, '/#atelier'],
   ]),
-  ['/realisations', '/#realisations'],
-  ['/realisations/', '/#realisations'],
-  ['/realisations.html', '/#realisations'],
+  ...['/services', '/realisations'].flatMap((path) => [[path, '/#metiers'], [`${path}/`, '/#metiers'], [`${path}.html`, '/#metiers']]),
+  ...['/creation-site-web', '/realisations/nh-installation', '/realisations/kebab-paradise', '/projets/nh-installation', '/projets/kebab-paradise'].flatMap((path) => [
+    [path, '/developpement-web/'], [`${path}/`, '/developpement-web/'], [`${path}.html`, '/developpement-web/'],
+  ]),
   ['/contact.html', contactPath],
   ['/merci.html', contactPath],
-  ['/realisations/nh-installation', projectPath('nh-installation')],
-  ['/realisations/nh-installation/', projectPath('nh-installation')],
-  ['/realisations/kebab-paradise', projectPath('kebab-paradise')],
-  ['/realisations/kebab-paradise/', projectPath('kebab-paradise')],
 ]);

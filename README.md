@@ -1,34 +1,28 @@
 # Helvnet
 
-Vitrine de l’atelier informatique de Diego en Suisse romande. Le traceur de Gruyère ouvre sur le développement web, les applications sur mesure et l’automatisation avec l’IA.
+Vitrine de Diego Vicente, développeur en Suisse romande. Une galerie interactive présente les sites web, les applications et les intégrations IA.
 
-## Prévisualiser en local
+## Prévisualiser
 
-Utilisez Node.js 22 ou une version plus récente. Depuis le dossier du projet, lancez la commande suivante dans PowerShell.
+PowerShell avec Node.js 22 ou une version plus récente.
 
 ```powershell
 npm.cmd run preview
 ```
 
-La commande génère les pages puis démarre le serveur. [Ouvrir la prévisualisation](http://127.0.0.1:4173/)
+[Ouvrir la prévisualisation](http://127.0.0.1:4173/). La commande génère cinq pages statiques dans `dist/` avant de démarrer le serveur.
 
-`npm.cmd run build` génère les sept pages et l’estampe SVG dans `dist/`. Pour Netlify, `netlify.toml` déclare la commande et le dossier à publier. La compilation génère le sitemap et les redirections des anciennes adresses.
+## Parcours
 
-## Essayer la démonstration
+- Les flèches, les noms sous la galerie et le glissement horizontal changent de service. Les filaments de la sphère ondulent et la sphère se resserre en traversant une traînée avant de se reformer dans la couleur suivante. L’animation se met en pause quand l’onglet est masqué et respecte le réglage de mouvement réduit.
+- La molette verticale ouvre le service puis avance entre sa présentation, sa démo et ses capacités. La sphère accompagne le passage entre les écrans et se reflète sur le sol vert. Sur téléphone, le bouton d’exploration et le glissement vers le haut ouvrent le service. Les onglets restent accessibles à chaque étape.
+- Chaque service possède une adresse directe. Les exemples illustrent un formulaire responsive, une demande affectée à un créneau et une fiche préparée depuis un e-mail.
+- Le bouton « Demander un devis » présélectionne le service courant. Le visiteur peut ouvrir un brouillon dans sa messagerie ou copier le texte.
 
-1. Dans l’automatisation, validez l’exemple « Deux places » pour la séance du jeudi à 18 h.
-2. Ouvrez l’horaire public pour voir « Complet », puis le registre pour retrouver la séance à 6/6.
-3. Annulez l’inscription dans le registre. La séance revient à 4/6 et l’horaire affiche à nouveau deux places.
+## Sources
 
-La salle et les messages sont fictifs. Les exemples utilisent des extractions préparées. Les corrections, le contrôle de capacité et les inscriptions s’exécutent dans le navigateur. Les trois vues conservent les modifications dans le même onglet pendant les changements de page et les rechargements. « Recommencer la démo » rétablit l’état initial.
-
-## Modifier le site
-
-- `src/terrain.mjs` génère le champ de hauteur, les courbes de niveau et le tracé rouge. `src/engraving.mjs` produit la scène et le fichier à emporter à partir de ces coordonnées.
-- `src/assets/demo-model.js` porte les règles communes de disponibilité, de validation et d’annulation. `src/demo-views.mjs` construit les trois interfaces.
-- `src/projects.mjs` et `src/assets/projets/` contiennent les textes et captures authentiques des deux réalisations. [NH Installation](https://nh-installation.ch/) · [Kebab Paradise](https://kebab-paradise.ch/)
+- `src/pages.mjs` construit l’accueil, les menus, les pages de service et le devis.
+- `src/offerings.mjs` contient les intitulés, les textes et les routes des trois domaines.
+- `src/assets/experience.js` pilote les écrans, les gestes et l’historique. `src/assets/energy-orb.js` dessine la sphère, sa traînée et leur reflet. `src/assets/scene-motion.js` calcule les positions dans le décor et les trajectoires entre les écrans.
+- `src/demo-views.mjs` et `src/assets/examples.js` contiennent les trois exemples fictifs. Ils fonctionnent dans le navigateur.
 - `src/config.mjs` centralise le domaine, le destinataire des devis et les redirections.
-
-## Réception des devis
-
-Le bouton prépare un brouillon dans la messagerie du visiteur, à destination de `contact@helvnet.ch`. L’adresse figure dans la configuration de l’ancienne vitrine. Vérifiez la réception de cette boîte avant la mise en ligne.
