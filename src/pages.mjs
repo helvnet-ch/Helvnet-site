@@ -17,7 +17,7 @@ function objectControls() {
   return `<details class="object-settings" data-object-settings hidden>
     <summary>Régler la forme</summary>
     <div class="object-options">
-      <label>Teinte <input type="color" data-shade value="#ed534b"></label>
+      <label>Teinte <input type="color" data-shade value="#c6ff5c"></label>
       <button class="text-link bare-button" type="button" data-reset-shade>Teintes par service</button>
       <label>Filets <input type="range" id="shape-lines" min="12" max="42" value="28"><output for="shape-lines">28</output></label>
       <label>Ouverture <input type="range" id="shape-opening" min="0" max="100" value="22"><output for="shape-opening">22 %</output></label>
@@ -35,7 +35,7 @@ export function layout(page, content) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${page.title}</title>
   <meta name="description" content="${page.description}">
-  <meta name="theme-color" content="#111116">
+  <meta name="theme-color" content="#000000">
   ${page.noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" href="${canonical}">`}
   <meta property="og:type" content="website">
   <meta property="og:locale" content="fr_CH">
@@ -49,7 +49,6 @@ export function layout(page, content) {
   <meta property="og:image:alt" content="La galerie des trois services Helvnet">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="/assets/favicon.png">
-  <link rel="preload" href="/assets/fonts/instrument-sans.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/assets/styles.css">
   <script type="module" src="/assets/navigation.js"></script>
   ${experience ? '<script type="module" src="/assets/experience.js"></script>\n  <script type="module" src="/assets/examples.js"></script>\n  <script type="module" src="/assets/site.js"></script>' : ''}
@@ -59,7 +58,7 @@ export function layout(page, content) {
   <header class="site-header">
     <div class="shell header-inner">
       ${brand}
-      <p class="header-identity">Diego Vicente <span aria-hidden="true">/</span> Suisse romande</p>
+      <p class="header-tagline">Sites web, applications et intégrations IA sur mesure.</p>
       <details class="site-menu">
         <summary><span class="menu-glyph" aria-hidden="true"></span> Menu</summary>
         <div class="menu-panel">
@@ -69,6 +68,7 @@ export function layout(page, content) {
             <a href="/#atelier" data-menu-link="atelier">L’atelier</a>
           </nav>
           ${experience ? objectControls() : ''}
+          <p class="menu-identity">Diego Vicente <span aria-hidden="true">/</span> Suisse romande</p>
         </div>
       </details>
       ${quoteLink(page.offer ?? (page.home ? 'web' : undefined), ' data-active-quote')}
@@ -83,21 +83,16 @@ export function layout(page, content) {
 
 function art() {
   return `<div class="stage-visuals" aria-hidden="true">
-    <div class="stage-atmosphere">
-      ${offerings.map(({ id }) => `<div class="atmosphere atmosphere-${id}" data-atmosphere="${id}"></div>`).join('')}
+    <div class="energy-fallback" data-energy-fallback>
+      ${offerings.map(({ id }) => `<div class="fallback-sculpture" data-fallback-sculpture="${id}"></div>`).join('')}
     </div>
-    <div class="stage-shadow"></div>
-    <div class="stage-floor" data-stage-floor></div>
-    <div class="energy-fallback" data-energy-fallback></div>
     <canvas class="stage-canvas" data-energy-orb hidden></canvas>
   </div>`;
 }
 
 function gallery(page) {
   return `<section class="screen gallery" id="metiers" data-screen="gallery" data-route="/" data-kind="gallery"${page.home ? '' : ' hidden'} aria-labelledby="gallery-title">
-    <div class="gallery-heading">
-      <h1 id="gallery-title" tabindex="-1">Sites web, applications et intégrations IA sur mesure.</h1>
-    </div>
+    <h1 id="gallery-title" class="visually-hidden" tabindex="-1">Les services Helvnet</h1>
     <div class="gallery-interaction" data-swipe-surface>
       <button type="button" class="step-button step-previous" data-step="-1" aria-label="Service précédent" hidden><span aria-hidden="true"></span></button>
       <button type="button" class="step-button step-next" data-step="1" aria-label="Service suivant" hidden><span aria-hidden="true"></span></button>

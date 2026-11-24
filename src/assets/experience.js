@@ -1,5 +1,5 @@
-import { floorHorizon, settleAxis, stagePose } from './scene-motion.js';
-import { createEnergyOrb } from './energy-orb.js';
+import { sculpturePoses, settleAxis, stagePose } from './scene-motion.js';
+import { createEnergyOrb, sculptureTone } from './energy-orb.js';
 
 const experience = document.querySelector('[data-experience]');
 const screens = [...experience.querySelectorAll('[data-screen]')];
@@ -7,13 +7,12 @@ const routes = new Map(screens.map((screen) => [screen.dataset.route, screen]));
 const choices = [...experience.querySelectorAll('[data-choice]')];
 const captions = [...experience.querySelectorAll('[data-caption]')];
 const worlds = choices.map((choice) => choice.dataset.choice);
-const atmospheres = [...experience.querySelectorAll('[data-atmosphere]')];
 const quotes = [...document.querySelectorAll('[data-active-quote]')];
 const menu = document.querySelector('.site-menu');
 const surface = experience.querySelector('[data-swipe-surface]');
 const orbCanvas = experience.querySelector('[data-energy-orb]');
 const orbFallback = experience.querySelector('[data-energy-fallback]');
-const floor = experience.querySelector('[data-stage-floor]');
+const fallbackSculptures = [...orbFallback.children];
 const orb = createEnergyOrb(orbCanvas);
 const status = experience.querySelector('[data-selection-status]');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -26,7 +25,7 @@ const responses = { position: 11.3, x: 8.8, y: 8.8, radius: 8.5, orbit: 9.3, vis
 const axes = Object.keys(responses);
 const zeroSpeed = Object.fromEntries(axes.map((axis) => [axis, 0]));
 const sceneTime = 990;
-const orbitTime = 1040;
+const orbitTime = 1060;
 
 let current;
 let selected = -1;
@@ -37,7 +36,7 @@ let orbTime = 0;
 let motion;
 let screenMotion = [];
 let viewport = { width: 1, height: 1, mobile: false };
-let drawnHorizon;
+let toneControl;
 let pointer = [0, 0];
 let shape = { tone: '', lines: 28, opening: 22 };
 let appearance = { position: 0, ...stagePose('gallery', viewport) };
@@ -52,6 +51,7 @@ function reflectSelection(index, remember) {
   if (selected === index) return;
   selected = index;
   experience.dataset.world = world;
+  reflectTone();
   for (const [i, choice] of choices.entries()) {
     choice.toggleAttribute('data-active', i === index);
     choice.setAttribute('aria-pressed', String(i === index));
@@ -65,44 +65,32 @@ function reflectSelection(index, remember) {
   }
 }
 
-function opacityAt(position, index) {
-  const remainder = Math.max(0, 1 - Math.abs(relative(position, index)));
-  return remainder * remainder * (3 - 2 * remainder);
-}
-
-function paintAtmosphere(position) {
-  for (const [index, atmosphere] of atmospheres.entries()) {
-    const opacity = opacityAt(position, index).toFixed(4);
-    if (atmosphere.style.opacity !== opacity) atmosphere.style.opacity = opacity;
-  }
-}
-
-function paintFloor(state) {
-  const horizon = Math.round(floorHorizon(state, viewport.height));
-  if (drawnHorizon === horizon) return;
-  floor.style.insetBlockStart = `${horizon}px`;
-  drawnHorizon = horizon;
+function reflectTone() {
+  if (toneControl) toneControl.value = shape.tone || sculptureTone(selected);
 }
 
 function paintFallback(state) {
-  paintFloor(state);
-  orbFallback.style.left = `${state.x}px`;
-  orbFallback.style.top = `${state.y}px`;
-  orbFallback.style.inlineSize = `${2 * state.radius}px`;
-  orbFallback.style.opacity = state.visibility;
+  for (const piece of sculpturePoses(state, viewport.width, worlds.length)) {
+    const node = fallbackSculptures[piece.index];
+    node.style.left = `${piece.x}px`;
+    node.style.top = `${piece.y}px`;
+    node.style.inlineSize = `${2 * piece.size}px`;
+    node.style.opacity = piece.opacity;
+    node.style.zIndex = Math.round(piece.front * 100);
+  }
 }
 
 function orbVisible() {
   return orb && current && !document.hidden;
 }
 
-function updateOrb() {
+function updateOrb(redraw = false) {
+  if (redraw) orbLastDraw = 0;
   if (orbVisible()) {
     orbFrame ||= requestAnimationFrame(drawOrb);
   } else {
     cancelAnimationFrame(orbFrame);
     orbFrame = orbLastDraw = 0;
-    orb?.clearTrail();
   }
 }
 
@@ -111,10 +99,23 @@ function drawOrb(now) {
   if (!orbVisible()) return;
   const animate = !reducedMotion.matches;
   if (!orbLastDraw || !animate || motion || drag?.kind || now - orbLastDraw >= 30) {
-    if (animate && orbLastDraw) orbTime += Math.min(now - orbLastDraw, 65) / 1000;
-    const state = motion ? sample(motion, motionElapsed(motion)).state : appearance;
-    paintFloor(state);
-    orb.draw(state, shape, animate ? pointer : [0, 0], orbTime, now, animate);
+    const elapsed = animate && orbLastDraw ? clamp(now - orbLastDraw, 0, 65) / 1000 : 0;
+    orbTime += elapsed;
+    let state = appearance;
+    let velocity = speeds;
+    if (motion) {
+      const travel = motionElapsed(motion, now);
+      ({ state, velocity } = sample(motion, travel));
+      if (travel >= motion.duration) {
+        appearance = state;
+        Object.assign(speeds, zeroSpeed);
+        motion = undefined;
+      }
+    }
+    orb.draw(state, shape, {
+      pointer: animate ? pointer : [0, 0], time: orbTime, elapsed,
+      velocity: animate ? velocity : zeroSpeed, active: selected, animated: animate,
+    });
     orbLastDraw = now;
     if (orbCanvas.hidden) {
       orbCanvas.hidden = false;
@@ -129,14 +130,14 @@ function sample({ from, speed, to, duration, galleryTurn }, elapsed) {
   const state = {};
   const velocity = {};
   for (const axis of axes) {
-    const response = galleryTurn && axis === 'position' ? 8.2 : responses[axis];
+    const response = galleryTurn && axis === 'position' ? 7.9 : responses[axis];
     [state[axis], velocity[axis]] = settleAxis(from[axis], speed[axis], to[axis], response, elapsed / 1000);
   }
   return { state, velocity };
 }
 
-function motionElapsed(scene) {
-  return clamp(Number(scene.tracks[0].currentTime ?? 0), 0, scene.duration);
+function motionElapsed(scene, now = performance.now()) {
+  return clamp((scene.pausedAt ?? now) - scene.started, 0, scene.duration);
 }
 
 function freezeMotion() {
@@ -144,51 +145,28 @@ function freezeMotion() {
   const { state, velocity } = sample(motion, motionElapsed(motion));
   appearance = state;
   Object.assign(speeds, velocity);
-  for (const track of motion.tracks) track.cancel();
   motion = undefined;
-  paintAtmosphere(appearance.position);
 }
 
 function moveArt(next, immediate = false, approach = false) {
   freezeMotion();
   goal = { ...goal, ...next };
   const stationary = axes.every((axis) => appearance[axis] === goal[axis] && speeds[axis] === 0);
-  if (reducedMotion.matches || immediate || stationary || !atmospheres[0].animate) {
+  if (reducedMotion.matches || immediate || stationary || !orb) {
     appearance = { ...goal };
     for (const axis of axes) speeds[axis] = 0;
-    paintAtmosphere(goal.position);
     if (!orb) paintFallback(goal);
-    updateOrb();
+    updateOrb(true);
     return;
   }
 
   if (approach) speeds.radius += Math.min(appearance.radius * 5.7, 1050);
   const galleryTurn = appearance.orbit === 1 && goal.orbit === 1;
   const duration = galleryTurn ? orbitTime : sceneTime;
-  const nextMotion = { from: appearance, speed: { ...speeds }, to: goal, tracks: [], duration, galleryTurn };
-  const frames = Array.from({ length: 29 }, (_, index) => {
-    const offset = index / 28;
-    const { state } = sample(nextMotion, duration * offset);
-    return { offset, position: state.position };
-  });
-  paintAtmosphere(goal.position);
-  const timing = { duration, fill: 'none' };
-  for (const [index, atmosphere] of atmospheres.entries()) {
-    nextMotion.tracks.push(atmosphere.animate(frames.map(({ offset, position }) => ({
-      offset, opacity: opacityAt(position, index),
-    })), timing));
-  }
-  motion = nextMotion;
-  if (!orb) paintFallback(goal);
+  const started = performance.now();
+  motion = { from: appearance, speed: { ...speeds }, to: goal, started, duration, galleryTurn };
+  if (document.hidden) motion.pausedAt = started;
   updateOrb();
-  if (document.hidden) for (const track of motion.tracks) track.pause();
-  Promise.allSettled(nextMotion.tracks.map((track) => track.finished)).then(() => {
-    if (motion !== nextMotion) return;
-    motion = undefined;
-    appearance = { ...nextMotion.to };
-    for (const axis of axes) speeds[axis] = 0;
-    updateOrb();
-  });
 }
 
 function readRoute(url) {
@@ -423,7 +401,7 @@ surface.addEventListener('pointermove', (event) => {
     appearance.position = next;
     drag.sampleTime = event.timeStamp;
     reflectSelection(wrap(Math.round(appearance.position)), false);
-    paintAtmosphere(appearance.position);
+    if (!orb) paintFallback(appearance);
   }
 });
 
@@ -432,7 +410,16 @@ function finishDrag(event) {
   const gesture = drag;
   drag = undefined;
   delete surface.dataset.dragging;
-  if (!gesture.kind) return;
+  if (!gesture.kind) {
+    if (event.type !== 'pointerup') return;
+    const rect = experience.getBoundingClientRect();
+    const state = motion ? sample(motion, motionElapsed(motion)).state : appearance;
+    const piece = sculpturePoses(state, viewport.width, worlds.length).findLast(({ x, y, size }) => (
+      Math.hypot(event.clientX - rect.left - x, event.clientY - rect.top - y) < size * .92
+    ));
+    if (piece && piece.index !== selected) choose(piece.index);
+    return;
+  }
   if (event.type === 'pointercancel' || event.timeStamp - gesture.sampleTime > 80) speeds.position = 0;
   if (event.type !== 'pointercancel') {
     if (gesture.kind === 'horizontal') {
@@ -465,19 +452,19 @@ function loadObjectSettings() {
 
 function connectObjectSettings() {
   const controls = menu.querySelector('[data-object-settings]');
-  const tone = controls.querySelector('[data-shade]');
+  toneControl = controls.querySelector('[data-shade]');
   const lines = controls.querySelector('#shape-lines');
   const opening = controls.querySelector('#shape-opening');
   function update() {
-    if (shape.tone) tone.value = shape.tone;
+    reflectTone();
     lines.value = shape.lines;
     opening.value = shape.opening;
     controls.querySelector('output[for="shape-lines"]').value = lines.value;
     controls.querySelector('output[for="shape-opening"]').value = `${opening.value} %`;
     try { sessionStorage.setItem('helvnet.ribbon.v1', JSON.stringify(shape)); } catch { /* Keep current values. */ }
-    updateOrb();
+    updateOrb(true);
   }
-  tone.addEventListener('input', () => { shape.tone = tone.value; update(); });
+  toneControl.addEventListener('input', () => { shape.tone = toneControl.value; update(); });
   lines.addEventListener('input', () => { shape.lines = lines.valueAsNumber; update(); });
   opening.addEventListener('input', () => { shape.opening = opening.valueAsNumber; update(); });
   controls.querySelector('[data-reset-shade]').addEventListener('click', () => { shape.tone = ''; update(); });
@@ -520,10 +507,13 @@ reducedMotion.addEventListener('change', () => {
   moveArt(goal, true);
 });
 document.addEventListener('visibilitychange', () => {
-  for (const track of motion?.tracks ?? []) {
-    if (track.playState === 'finished') continue;
-    if (document.hidden) track.pause();
-    else track.play();
+  if (motion) {
+    const now = performance.now();
+    if (document.hidden) motion.pausedAt ??= now;
+    else if (motion.pausedAt !== undefined) {
+      motion.started += now - motion.pausedAt;
+      delete motion.pausedAt;
+    }
   }
   updateOrb();
 });

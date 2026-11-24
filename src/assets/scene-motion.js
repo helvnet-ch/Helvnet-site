@@ -22,8 +22,8 @@ export function stagePose(kind, { width, height, mobile }, gallery) {
     const area = Math.min(gallery?.height || height * .60, 608);
     return {
       x: width * .5,
-      y: gallery ? gallery.top + gallery.height * (mobile ? .52 : .46) : height * .37,
-      radius: Math.min(width * .30, area * (mobile ? .324 : .341), 192),
+      y: gallery ? gallery.top + gallery.height * (mobile ? .50 : .47) : height * .37,
+      radius: Math.min(width * (mobile ? .267 : .22), area * (mobile ? .325 : .346), 202),
       orbit: 1,
       visibility: 1,
     };
@@ -34,6 +34,35 @@ export function stagePose(kind, { width, height, mobile }, gallery) {
   return { x: x * width, y: y * height, radius: Math.min(width * breadth, height * depth, maxRadius), orbit: 0, visibility: room.visibility };
 }
 
-export function floorHorizon({ y, radius }, height) {
-  return Math.min(y + radius * .96, Math.max(height * .45, y + radius * .57));
+const mix = (from, to, amount) => from + (to - from) * amount;
+const atRest = { x: 0, y: 0, radius: 0, position: 0, orbit: 0 };
+
+export function sculpturePoses({ x, y, radius, position, orbit, visibility }, width, count, velocity = atRest) {
+  const gallery = Math.max(0, Math.min(1, orbit));
+  const orbitSpeed = gallery === orbit ? velocity.orbit : 0;
+  const mobile = width <= 688;
+  const reach = Math.min(width * (mobile ? .368 : .325), 433);
+  const rise = mobile ? .91 : .76;
+  const spacing = 2 * Math.PI / count;
+  const angularSpeed = -velocity.position * spacing;
+  return Array.from({ length: count }, (_, index) => {
+    const offset = ((index - position + count / 2) % count + count) % count - count / 2;
+    const angle = offset * spacing;
+    const sine = Math.sin(angle);
+    const cosine = Math.cos(angle);
+    const front = .5 + .5 * cosine;
+    const depth = 1 - front;
+    const alone = 1 - Math.min(1, Math.abs(offset));
+    const participation = alone * alone * (3 - 2 * alone);
+    const size = radius * mix(1, .475 + .525 * front ** 1.66, gallery);
+    return {
+      index, front, size,
+      x: x + sine * reach * gallery,
+      y: y - radius * rise * depth * gallery,
+      vx: velocity.x + reach * (cosine * angularSpeed * gallery + sine * orbitSpeed),
+      vy: velocity.y - rise * ((velocity.radius * gallery + radius * orbitSpeed) * depth +
+        radius * gallery * .5 * sine * angularSpeed),
+      opacity: visibility * mix(participation, .75 + .25 * front, gallery),
+    };
+  }).sort((a, b) => a.front - b.front);
 }

@@ -13,7 +13,6 @@ const staging = await mkdtemp(join(root, '.helvnet-build-'));
 const assets = [
   'styles.css', 'navigation.js', 'experience.js', 'scene-motion.js', 'energy-orb.js', 'examples.js', 'site.js',
   'logo.png', 'logo-320.png', 'favicon.png',
-  'fonts/instrument-sans.woff2', 'fonts/OFL-instrument-sans.txt',
   'partage/helvnet.jpg',
 ];
 

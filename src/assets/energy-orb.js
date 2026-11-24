@@ -1,315 +1,300 @@
+import { sculpturePoses, settleAxis } from './scene-motion.js';
+
 const turn = 2 * Math.PI;
-const sampleCount = 96;
-const waveSamples = Array.from({ length: sampleCount + 1 }, (_, index) => {
-  const angle = index * turn / sampleCount;
-  return [Math.cos(angle), Math.sin(angle), Math.cos(2 * angle), Math.sin(2 * angle),
-    Math.cos(3 * angle), Math.sin(3 * angle), Math.cos(5 * angle), Math.sin(5 * angle)];
+const extent = 1.86;
+const samples = Array.from({ length: 97 }, (_, index) => {
+  const angle = index * turn / 96;
+  return { angle, sine: Math.sin(angle), cosine: Math.cos(angle) };
 });
 
-const palettes = [
-  { glow: [255, 96, 81], body: [161, 37, 92], light: [255, 211, 175] },
-  { glow: [64, 237, 206], body: [26, 95, 154], light: [189, 255, 231] },
-  { glow: [172, 117, 255], body: [82, 46, 190], light: [243, 210, 255] },
+const forms = [
+  {
+    tone: '#c6ff5c', tilt: -.29, roll: -.24, aspect: [1.03, .95], tempo: .77, phase: .36,
+    wave: .119, pinch: .065, crossing: .25, core: .36, elasticity: .47,
+  },
+  {
+    tone: '#74a4bc', tilt: -.48, roll: -.44, aspect: [.94, 1.08], tempo: .63, phase: 2.36,
+    loop: true, crossing: .24, core: 0, elasticity: .39,
+  },
+  {
+    tone: '#f005d8', tilt: .16, roll: -.51, aspect: [1.05, .93], tempo: .86, phase: 4.35,
+    wave: .131, pinch: .43, crossing: .23, core: .27, elasticity: .49,
+  },
 ];
 
-const limit = (value, low, high) => Math.max(low, Math.min(high, value));
-const mix = (a, b, weight) => a + (b - a) * weight;
-const tint = (a, b, weight) => a.map((channel, index) => mix(channel, b[index], weight));
-const wrap = (index) => (index % palettes.length + palettes.length) % palettes.length;
-const color = (rgb, alpha) => `rgba(${rgb.map(Math.round).join(',')},${alpha})`;
+const rgb = (channels, alpha = 1) => 'rgba(' + channels.map(Math.round).join(',') + ',' + alpha + ')';
+const mix = (a, b, weight) => a.map((value, index) => value + (b[index] - value) * weight);
 
-function ease(edge0, edge1, value) {
-  const t = limit((value - edge0) / (edge1 - edge0), 0, 1);
-  return t * t * (3 - 2 * t);
+export function sculptureTone(index) {
+  return forms[index].tone;
 }
 
-function paletteAt(position, tone) {
-  const index = Math.floor(position);
-  const from = palettes[wrap(index)];
-  const to = palettes[wrap(index + 1)];
-  const amount = ease(.26, .74, position - index);
-  if (tone) {
-    const glow = [1, 3, 5].map((offset) => parseInt(tone.slice(offset, offset + 2), 16));
-    return { glow, body: tint(glow, [37, 13, 66], .55), light: tint(glow, [255, 244, 243], .69) };
-  }
-  return { glow: tint(from.glow, to.glow, amount), body: tint(from.body, to.body, amount), light: tint(from.light, to.light, amount) };
+function lightPalette(index, tone) {
+  const hex = tone || sculptureTone(index);
+  const pigment = [1, 3, 5].map((offset) => parseInt(hex.slice(offset, offset + 2), 16));
+  return { pigment, shine: mix(pigment, [240, 245, 255], .66) };
 }
 
-function placeOrb(width, height, { x, y, position, orbit }) {
-  const phase = position * turn;
-  const arc = Math.sin(phase * .5) ** 2;
-  const weight = limit(orbit, 0, 1);
-  return {
-    x: x - Math.sin(phase) * Math.min(width * .333, 275) * weight,
-    y: y - arc * Math.min(height * .145, 110) * weight,
-    scale: 1 - .932 * ease(.027, .96, Math.sqrt(arc)) * weight,
+function curvedShell(out, radial, vertical, sample, crossing, form, phase, opening) {
+  const u = radial * sample.cosine;
+  const z = radial * sample.sine;
+  // Both filament families travel across the same deforming surface.
+  const x = crossing ? u * .47 - vertical * .883 : u;
+  const y = crossing ? u * .883 + vertical * .47 : vertical;
+  const swell = Math.sin(y * 3.83 + z * 2.9 + phase);
+  const curl = Math.sin(x * 3.7 - z * 3.1 - phase * .72);
+  const fold = Math.sin(x * 4.1 + z * 1.95 - phase * .84);
+  const waist = y - .074 * Math.sin(phase * .66 + x * 2.9);
+  const pinch = form.pinch * Math.exp(-waist * waist * 15);
+  const spread = (1 - pinch) * (1 + opening * (form.wave * swell + .072 * curl));
+  out[0] = spread * x + .083 * Math.sin(3.1 * y + phase);
+  out[1] = .957 * y + .13 * opening * (1 - y * y) * fold;
+  out[2] = spread * z + .072 * Math.sin(y * 4.6 - phase);
+}
+
+function openLoop(out, ring, tube, phase, opening) {
+  const angle = ring.angle;
+  const fold = Math.sin(2 * angle + phase * .77);
+  const twist = .47 * phase + .87 * Math.sin(angle - phase * .62);
+  const ca = Math.cos(twist), sa = Math.sin(twist);
+  const section = .293 + .040 * opening * Math.cos(angle * 3 - phase * .62);
+  const shell = .715 + opening * (.081 * fold + .051 * Math.sin(3 * angle - phase));
+  const radius = shell + section * (tube.cosine * ca - tube.sine * sa);
+  out[0] = radius * ring.cosine + .057 * Math.sin(3 * angle + phase);
+  out[1] = radius * ring.sine + .053 * fold;
+  out[2] = .92 * section * (tube.sine * ca + tube.cosine * sa) + .185 * fold;
+}
+
+function projector(form, phase, pointer, stretch) {
+  const tilt = form.tilt + .095 * Math.sin(phase * .58) + pointer[1] * .13;
+  const roll = form.roll + .12 * Math.sin(phase * .64) + pointer[0] * .10;
+  const ct = Math.cos(tilt), st = Math.sin(tilt);
+  const cr = Math.cos(roll), sr = Math.sin(roll);
+  const [aspectX, aspectY] = form.aspect;
+  const extension = Math.hypot(stretch.x, stretch.y);
+  const ax = extension > .001 ? stretch.x / extension : 1;
+  const ay = extension > .001 ? stretch.y / extension : 0;
+
+  return (point, screen) => {
+    const [u, v, w] = point;
+    const vertical = v * ct - w * st;
+    const depth = v * st + w * ct;
+    const perspective = 1 / (1 - depth * .148);
+    const x = (u * cr - vertical * sr) * perspective * aspectX;
+    const y = (u * sr + vertical * cr) * perspective * aspectY;
+
+    const along = x * ax + y * ay;
+    const across = y * ax - x * ay;
+    const pulled = along + extension * (along * (1 - .25 * along) + .048 * depth);
+    const compressed = across * (1 - extension * (.45 + .11 * along)) +
+      extension * .12 * (1 - along * along) * (1 - depth * .35);
+    screen[0] = pulled * ax - compressed * ay;
+    screen[1] = pulled * ay + compressed * ax;
+    screen[2] = depth * (form.loop ? 1.45 : 1);
   };
 }
 
-function drawAura(context, palette, spark) {
-  const haze = context.createRadialGradient(-.12, -.14, .05, 0, 0, 1.49);
-  haze.addColorStop(0, color(palette.glow, .36 + spark * .42));
-  haze.addColorStop(.47, color(palette.body, .40));
-  haze.addColorStop(.66, color(palette.glow, .13));
-  haze.addColorStop(1, color(palette.glow, 0));
-  context.fillStyle = haze;
-  context.fillRect(-1.5, -1.5, 3, 3);
-
-  const core = context.createRadialGradient(-.24, -.27, .04, -.02, .01, .99);
-  core.addColorStop(0, color(palette.light, .24 + spark * .76));
-  core.addColorStop(.36, color(palette.glow, .24 + spark * .55));
-  core.addColorStop(.72, color(palette.body, .24));
-  core.addColorStop(1, color(palette.body, 0));
-  context.fillStyle = core;
-  context.fillRect(-1.05, -1.05, 2.1, 2.1);
-}
-
-function weavePaths(time, position, shape, pointer) {
+function threadGeometry(form, time, controls, pointer, piece, stretch) {
   const layers = Array.from({ length: 8 }, () => new Path2D());
-  const rhythm = position * turn / palettes.length;
-  const tilt = -.26 + .09 * Math.sin(time * .48 + rhythm) + pointer[1] * .16;
-  const ct = Math.cos(tilt);
-  const st = Math.sin(tilt);
-  const lines = Math.round(shape.lines);
-  const space = .77 + shape.opening * .009;
-  const crossLines = Math.ceil(lines * .26);
+  const phase = form.phase + time * form.tempo;
+  const project = projector(form, phase, pointer, stretch);
+  const count = Math.round(controls.lines);
+  const crossCount = Math.ceil(count * form.crossing);
+  const opening = .73 + controls.opening * .009;
+  const step = piece.size < 96 ? 2 : 1;
+  const point = [0, 0, 0];
+  const screen = [0, 0, 0];
+  let bottom = 0;
 
-  for (let line = 0; line < lines + crossLines; line++) {
-    const crossing = line >= lines;
-    const fraction = crossing ? (line - lines + .5) / crossLines : (line + .38) / (lines - .24);
-    const latitude = (fraction - .5) * 2.80;
-    const height = Math.sin(latitude);
-    const spread = Math.cos(latitude);
-    const roll = (crossing ? .86 : -.25) + .09 * Math.sin(time * .61 + rhythm) + pointer[0] * .12;
-    const cr = Math.cos(roll);
-    const sr = Math.sin(roll);
-    const fold = height * 2.36 + time * .91 + rhythm;
-    const fold2 = height * 3.46 - time * .68 - rhythm;
-    const fold3 = height * 7.6 - time * 1.32 + rhythm;
-    const s1 = Math.sin(fold), c1 = Math.cos(fold);
-    const s2 = Math.sin(fold2), c2 = Math.cos(fold2);
-    const s3 = Math.sin(fold3), c3 = Math.cos(fold3);
+  for (let line = 0; line < count + crossCount; line++) {
+    const crossing = line >= count;
+    const fraction = crossing ? (line - count + .45) / crossCount : (line + .35) / count;
+    const fixed = samples[Math.round(fraction * (samples.length - 1))];
+    const latitude = (fraction - .5) * 2.89;
+    const radial = Math.cos(latitude), vertical = Math.sin(latitude);
     const accent = !crossing && line % 5 === 1;
-    let previousX, previousY, previousDepth;
+    let previousX = 0, previousY = 0, previousDepth = 0;
     let previousLayer = -1;
-    for (const [c, s, cTwo, sTwo, cThree, sThree, cFive, sFive] of waveSamples) {
-      const swell = cTwo * s1 + sTwo * c1;
-      const curl = cThree * s2 + sThree * c2;
-      const ripple = cFive * s3 + sFive * c3;
-      const radius = spread * (1 + space * (.108 * swell + .058 * curl + .024 * ripple));
-      const level = height * .94 + spread * space * (
-        .146 * (sTwo * s1 - cTwo * c1) + .071 * curl + .022 * ripple + .071 * (c * s2 + s * c2)
-      );
-      const localX = c * radius;
-      const localZ = s * radius;
-      const y = level * ct - localZ * st;
-      const depth = level * st + localZ * ct;
-      const perspective = 1 / (1 - depth * .17);
-      const x = (localX * cr - y * sr) * perspective;
-      const screenY = (localX * sr + y * cr) * perspective;
-      if (previousDepth !== undefined) {
-        const meanDepth = (depth + previousDepth) * .5;
-        const band = meanDepth < -.27 ? 0 : meanDepth < .08 ? 1 : meanDepth < .58 ? 2 : 3;
+
+    for (let segment = 0; segment < samples.length; segment += step) {
+      const sample = samples[segment];
+      if (form.loop) openLoop(point, crossing ? fixed : sample, crossing ? sample : fixed, phase, opening);
+      else curvedShell(point, radial, vertical, sample, crossing, form, phase, opening);
+      project(point, screen);
+      const [x, y, depth] = screen;
+      bottom = Math.max(bottom, y);
+
+      if (segment) {
+        const mid = (depth + previousDepth) * .5;
+        const band = mid < -.29 ? 0 : mid < .04 ? 1 : mid < .52 ? 2 : 3;
         const layer = 2 * band + Number(accent);
         const path = layers[layer];
         if (layer !== previousLayer) path.moveTo(previousX, previousY);
-        path.lineTo(x, screenY);
+        path.lineTo(x, y);
         previousLayer = layer;
       }
       previousX = x;
-      previousY = screenY;
+      previousY = y;
       previousDepth = depth;
     }
   }
-  return layers;
+  return { layers, bottom };
 }
 
-function drawWeave(context, paths, palette, size, opacity) {
-  context.globalAlpha = opacity;
-  const strengths = [.16, .28, .53, .9];
-  for (const [index, path] of paths.entries()) {
-    const weight = strengths[Math.floor(index / 2)];
+function drawCore(context, form, palette, stretch, time) {
+  if (!form.core) return;
+  const current = time * form.tempo + form.phase;
+  const intensity = form.core * (.91 + .09 * Math.sin(current * .78));
+  context.save();
+  context.translate(-.055 + .12 * Math.sin(current * .72) + .34 * stretch.x, -.06 + .34 * stretch.y);
+  context.scale(form.pinch > .30 ? .80 : 1, 1);
+  const inner = context.createRadialGradient(-.19, -.22, .018, -.04, -.02, .94);
+  inner.addColorStop(0, rgb(palette.shine, intensity));
+  inner.addColorStop(.28, rgb(palette.pigment, intensity * .71));
+  inner.addColorStop(.67, rgb(palette.pigment, intensity * .18));
+  inner.addColorStop(1, rgb(palette.pigment, 0));
+  context.fillStyle = inner;
+  context.fillRect(-1.02, -1.02, 2.04, 2.04);
+  context.restore();
+}
+
+function drawFilaments(context, layers, palette, size, phase) {
+  const strengths = [.23, .42, .76, 1];
+  const sway = .14 * Math.sin(phase);
+  const beam = context.createLinearGradient(-.89 + sway, -.81, .80, .81 - sway);
+  beam.addColorStop(0, rgb(mix(palette.pigment, palette.shine, .44), .66));
+  beam.addColorStop(.26, rgb(palette.shine, 1));
+  beam.addColorStop(.53, rgb(mix(palette.pigment, palette.shine, .22), .96));
+  beam.addColorStop(.74, rgb(palette.pigment, .87));
+  beam.addColorStop(1, rgb(mix(palette.pigment, palette.shine, .26), .67));
+
+  for (let index = 0; index < layers.length; index++) {
     const accent = index % 2;
-    const filament = context.createLinearGradient(-.83, -.77, .86, .73);
-    filament.addColorStop(0, color(palette.light, weight * (.68 + accent * .23)));
-    filament.addColorStop(.39, color(tint(palette.glow, palette.light, .56), weight * (.82 + accent * .18)));
-    filament.addColorStop(.69, color(palette.glow, weight * (.79 + accent * .15)));
-    filament.addColorStop(1, color(palette.light, weight * (.53 + accent * .24)));
+    const strength = strengths[Math.floor(index / 2)];
     if (index >= 4) {
-      context.strokeStyle = color(palette.glow, weight * (.06 + accent * .045));
-      context.lineWidth = (accent ? 5 : 3) / size;
-      context.stroke(path);
+      context.globalAlpha = strength * (accent ? .17 : .093);
+      context.lineWidth = accent ? .024 : .017;
+      context.strokeStyle = rgb(palette.pigment);
+      context.stroke(layers[index]);
     }
-    context.strokeStyle = filament;
-    context.lineWidth = (accent ? 1.32 : .82) / size;
-    context.stroke(path);
+    context.globalAlpha = strength * (accent ? 1 : .89);
+    context.lineWidth = Math.max(accent ? .0102 : .0072, (accent ? 1.0 : .69) / size);
+    context.strokeStyle = beam;
+    context.stroke(layers[index]);
   }
   context.globalAlpha = 1;
 }
 
-const trailLife = 390;
+function drawReflection(stage, mirror, fade, source, piece, bottom) {
+  const width = mirror.canvas.width, height = mirror.canvas.height;
+  mirror.clearRect(0, 0, width, height);
+  mirror.save();
+  mirror.translate(0, height);
+  mirror.scale(1, -height / source.height);
+  mirror.drawImage(source, 0, 0);
+  mirror.restore();
+  mirror.globalCompositeOperation = 'destination-in';
+  mirror.fillStyle = fade;
+  mirror.fillRect(0, 0, width, height);
+  mirror.globalCompositeOperation = 'source-over';
 
-function drawTrail(context, samples, now, radius) {
-  if (samples.length < 2) return;
-  const points = samples.map((point, index) => {
-    const before = samples[Math.max(0, index - 1)];
-    const after = samples[Math.min(samples.length - 1, index + 1)];
-    const dx = after.x - before.x;
-    const dy = after.y - before.y;
-    const length = Math.hypot(dx, dy) || 1;
-    const age = limit(1 - (now - point.time) / trailLife, 0, 1);
-    const taper = ease(0, 6, index);
-    return {
-      nx: -dy / length, ny: dx / length,
-      width: radius * .066 * age ** 1.45 * (1 - point.scale) ** 1.21 * taper,
-    };
-  });
-  const first = samples[0];
-  const last = samples.at(-1);
-  const end = Math.hypot(last.x - first.x, last.y - first.y) >= 1 ? last : samples[Math.floor(samples.length / 2)];
+  const span = piece.size * extent;
+  const plane = piece.y + piece.size * (bottom + .045) + 4;
+  const compression = .49;
+  const top = plane + (plane - piece.y - span) * compression;
+  stage.save();
+  stage.globalCompositeOperation = 'screen';
+  stage.globalAlpha = piece.opacity * .66;
+  stage.drawImage(mirror.canvas, piece.x - span, top, 2 * span, 2 * span * compression);
+  stage.restore();
 
-  for (const [thickness, opacity, hue, drift] of [
-    [1.6, .07, 'glow', 0], [.75, .16, 'glow', 0], [.115, .73, 'light', 0], [.064, .43, 'glow', .69],
-  ]) {
-    const strip = new Path2D();
-    for (const side of [1, -1]) {
-      for (let i = 0; i < points.length; i++) {
-        const index = side === 1 ? i : points.length - 1 - i;
-        const { x, y } = samples[index];
-        const { nx, ny, width } = points[index];
-        const offset = width * (thickness * side + drift * Math.sin(index * .29));
-        if (i === 0 && side === 1) strip.moveTo(x + nx * offset, y + ny * offset);
-        else strip.lineTo(x + nx * offset, y + ny * offset);
-      }
-    }
-    const light = context.createLinearGradient(first.x, first.y, end.x, end.y);
-    light.addColorStop(0, color(first[hue], opacity * .42));
-    light.addColorStop(.43, color(tint(first[hue], last[hue], .38), opacity * .83));
-    light.addColorStop(1, color(last[hue], opacity));
-    context.fillStyle = light;
-    context.fill(strip);
-  }
+  stage.save();
+  stage.globalAlpha = piece.opacity;
+  stage.translate(piece.x, plane);
+  stage.scale(piece.size * .94, Math.max(2, piece.size * .028));
+  const contact = stage.createRadialGradient(0, 0, 0, 0, 0, 1);
+  contact.addColorStop(0, 'rgba(218,221,240,.075)');
+  contact.addColorStop(1, 'rgba(218,221,240,0)');
+  stage.fillStyle = contact;
+  stage.fillRect(-1, -1, 2, 2);
+  stage.restore();
 }
 
-function drawReflection(context, image, width, height, { x, plane, radius, scale, visibility, palette }) {
-  const compression = .49;
-  context.save();
-  context.beginPath();
-  context.rect(0, plane - 2, width, height - plane + 2);
-  context.clip();
-  context.globalAlpha = .86 * visibility;
-  context.transform(1, 0, -.012, -compression, plane * .012, plane * (1 + compression));
-  context.drawImage(image, 0, 0, width, height);
-  context.restore();
+const relaxed = () => ({ x: 0, y: 0, vx: 0, vy: 0 });
 
-  const fade = context.createLinearGradient(0, plane - 2, 0, plane + radius * 1.23);
-  fade.addColorStop(0, '#000e');
-  fade.addColorStop(.24, '#000c');
-  fade.addColorStop(.62, '#0005');
-  fade.addColorStop(1, '#0000');
-  context.globalCompositeOperation = 'destination-in';
-  context.fillStyle = fade;
-  context.fillRect(0, 0, width, height);
-
-  const sheen = tint([58, 173, 112], palette.glow, .29);
-  const strength = visibility * (.32 + scale * .68);
-  context.save();
-  context.globalCompositeOperation = 'destination-over';
-  context.translate(x, plane + radius * .18);
-  context.scale(radius * 1.98, radius * .34);
-  const light = context.createRadialGradient(0, 0, 0, 0, 0, 1);
-  light.addColorStop(0, color(sheen, strength * .28));
-  light.addColorStop(.37, color(sheen, strength * .13));
-  light.addColorStop(1, color(sheen, 0));
-  context.fillStyle = light;
-  context.fillRect(-1, -1, 2, 2);
-  context.restore();
-  context.globalCompositeOperation = 'source-over';
+function stretchAlong(stretch, form, piece, elapsed) {
+  const speed = Math.hypot(piece.vx, piece.vy);
+  const tension = form.elasticity * (.76 + .24 * piece.front) *
+    Math.tanh(speed / Math.max(72, piece.size) * .24);
+  const weight = speed > 0 ? tension / speed : 0;
+  [stretch.x, stretch.vx] = settleAxis(stretch.x, stretch.vx, piece.vx * weight, 24, elapsed);
+  [stretch.y, stretch.vy] = settleAxis(stretch.y, stretch.vy, piece.vy * weight, 24, elapsed);
 }
 
 export function createEnergyOrb(canvas) {
   const stage = canvas.getContext('2d', { alpha: true });
   if (!stage) return;
-  const image = document.createElement('canvas');
-  const context = image.getContext('2d', { alpha: true });
-  if (!context) return;
+  const shapeLayer = document.createElement('canvas').getContext('2d', { alpha: true });
+  const mirror = document.createElement('canvas').getContext('2d', { alpha: true });
+  if (!shapeLayer || !mirror) return;
+  const strains = forms.map(relaxed);
   let width = 0;
   let height = 0;
-  let previous;
-  let trail = [];
-
-  function clearTrail() {
-    previous = undefined;
-    trail = [];
-  }
+  let reflectionFade;
 
   function resize() {
-    const w = canvas.parentElement.clientWidth;
-    const h = canvas.parentElement.clientHeight;
-    if (!w || !h) return;
-    const density = Math.min(devicePixelRatio || 1, 1.65, 1440 / w, 1100 / h);
-    const resolution = [Math.round(w * density), Math.round(h * density)];
-    if (w === width && h === height && canvas.width === resolution[0] && canvas.height === resolution[1]) return;
-    width = w;
-    height = h;
-    [canvas.width, canvas.height] = resolution;
-    [image.width, image.height] = resolution;
-    for (const layer of [stage, context]) {
-      layer.setTransform(canvas.width / width, 0, 0, canvas.height / height, 0, 0);
-    }
-    clearTrail();
+    const nextWidth = canvas.parentElement.clientWidth;
+    const nextHeight = canvas.parentElement.clientHeight;
+    if (!nextWidth || !nextHeight) return;
+    const density = Math.min(devicePixelRatio || 1, 1.7, 1580 / nextWidth, 1180 / nextHeight);
+    const nextSize = [Math.round(nextWidth * density), Math.round(nextHeight * density)];
+    if (width === nextWidth && height === nextHeight && canvas.width === nextSize[0] && canvas.height === nextSize[1]) return;
+    width = nextWidth;
+    height = nextHeight;
+    [canvas.width, canvas.height] = nextSize;
+    stage.setTransform(canvas.width / width, 0, 0, canvas.height / height, 0, 0);
+
+    const tile = Math.round(Math.max(400, Math.min(width * .73, height * .89, 790 / density) * density));
+    shapeLayer.canvas.width = shapeLayer.canvas.height = tile;
+    mirror.canvas.width = tile;
+    mirror.canvas.height = Math.ceil(tile * .5);
+    reflectionFade = mirror.createLinearGradient(0, 0, 0, mirror.canvas.height);
+    reflectionFade.addColorStop(0, '#000f');
+    reflectionFade.addColorStop(.26, '#000e');
+    reflectionFade.addColorStop(.65, '#0006');
+    reflectionFade.addColorStop(.96, '#0000');
+    const scale = tile / (2 * extent);
+    shapeLayer.setTransform(scale, 0, 0, scale, tile / 2, tile / 2);
+    shapeLayer.lineCap = 'round';
+    shapeLayer.lineJoin = 'round';
   }
 
-  function rememberTrail(state, tone, now) {
-    while (trail.length && now - trail[0].time > trailLife) trail.shift();
-    if (previous && state.orbit > .03) {
-      const from = previous.state;
-      const distance = Math.abs(state.position - from.position);
-      if (distance > .001) {
-        const steps = limit(Math.ceil(distance * 24), 1, 20);
-        for (let index = 1; index <= steps; index++) {
-          const weight = index / steps;
-          const position = mix(from.position, state.position, weight);
-          const point = placeOrb(width, height, {
-            position, orbit: mix(from.orbit, state.orbit, weight),
-            x: mix(from.x, state.x, weight), y: mix(from.y, state.y, weight),
-          });
-          if (point.scale > .985 && !trail.length) continue;
-          trail.push({ ...point, ...paletteAt(position, tone), time: mix(previous.time, now, weight) });
-        }
-      }
-    }
-    previous = { state: { ...state }, time: now };
-  }
-
-  function draw(state, shape, pointer, time, now, animated) {
+  function draw(state, controls, { pointer, time, elapsed, velocity, active, animated }) {
     if (!width || !height || state.radius <= 0) return;
-    const { position, radius } = state;
-    const visibility = limit(state.visibility, 0, 1);
-    const { x, y, scale } = placeOrb(width, height, state);
-    const palette = paletteAt(position, shape.tone);
-    const size = radius * scale;
-    const spark = 1 - ease(.073, .32, scale);
-    if (animated && (state.orbit > .03 || trail.length)) rememberTrail(state, shape.tone, now);
-    else clearTrail();
-
-    context.clearRect(0, 0, width, height);
-    drawTrail(context, trail, now, radius);
-    context.save();
-    context.translate(x, y);
-    context.scale(size, size);
-    drawAura(context, palette, spark);
-    if (spark < .98) drawWeave(context, weavePaths(time, position, shape, pointer), palette, size, 1 - spark);
-    context.restore();
-
     stage.clearRect(0, 0, width, height);
-    const plane = Math.min(height, state.y + radius * 1.095 + 7);
-    drawReflection(stage, image, width, height, { x, plane, radius, scale, visibility, palette });
-    stage.save();
-    stage.globalAlpha = visibility;
-    stage.drawImage(image, 0, 0, width, height);
-    stage.restore();
+    for (const piece of sculpturePoses(state, width, forms.length, velocity)) {
+      const form = forms[piece.index];
+      if (!animated) strains[piece.index] = relaxed();
+      const strain = strains[piece.index];
+      if (animated && elapsed) stretchAlong(strain, form, piece, elapsed);
+      if (piece.opacity < .009 || piece.size <= 0) continue;
+
+      const palette = lightPalette(piece.index, piece.index === active ? controls.tone : '');
+      const focus = .34 + .66 * piece.front;
+      const geometry = threadGeometry(form, time, controls, [pointer[0] * focus, pointer[1] * focus], piece, strain);
+      shapeLayer.clearRect(-extent, -extent, 2 * extent, 2 * extent);
+      drawCore(shapeLayer, form, palette, strain, time);
+      drawFilaments(shapeLayer, geometry.layers, palette, piece.size, form.phase + time * .41);
+      drawReflection(stage, mirror, reflectionFade, shapeLayer.canvas, piece, geometry.bottom);
+
+      const span = piece.size * extent;
+      stage.save();
+      stage.globalCompositeOperation = 'screen';
+      stage.globalAlpha = Math.min(1, piece.opacity);
+      stage.drawImage(shapeLayer.canvas, piece.x - span, piece.y - span, 2 * span, 2 * span);
+      stage.restore();
+    }
   }
 
-  return { draw, resize, clearTrail };
+  return { draw, resize };
 }
