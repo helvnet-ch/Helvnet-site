@@ -95,7 +95,9 @@ for path in /developpement-web/ /applications-sur-mesure/ /automatisation-ia/ '/
   [[ "$(curl "${curl_options[@]}" -o /dev/null -w '%{http_code}' "https://helvnet.ch$path")" == 200 ]] ||
     fail "Réponse inattendue pour $path"
 done
-[[ "$(curl "${curl_options[@]}" -o /dev/null -w '%{http_code} %{redirect_url}' 'https://helvnet.ch/services?source=controle')" == +   '301 https://helvnet.ch/developpement-web/?source=controle' ]] || fail 'Redirection /services inattendue.'
+services_redirect=$(curl "${curl_options[@]}" -o /dev/null -w '%{http_code} %{redirect_url}' 'https://helvnet.ch/services?source=controle')
+[[ "$services_redirect" == '301 https://helvnet.ch/developpement-web/?source=controle' ]] ||
+  fail 'Redirection /services inattendue.'
 for path in /realisations/cafe-brunch/boissons /realisations/nh-installation/ /realisations/kebab-paradise/ /projets/nh-installation/ /projets/kebab-paradise/ /verification-seo-page-inconnue-2026/; do
   [[ "$(curl "${curl_options[@]}" -o /dev/null -w '%{http_code}' "https://helvnet.ch$path")" == 404 ]] ||
     fail "Réponse inattendue pour $path"
