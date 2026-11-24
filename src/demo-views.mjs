@@ -38,7 +38,7 @@ export function exampleSection(offer) {
     <header class="example-description">
       <p class="eyebrow">Démonstration</p>
       <h2 id="example-title-${offer.id}">${offer.exampleTitle}</h2>
-      <p>${offer.id === 'ia' ? 'Exemple guidé · extraction préparée' : 'Exemple interactif'}</p>
+      <p>${offer.exampleContext}</p>
       <button class="button button-primary" type="button" data-example-action hidden>${example.action}</button>
     </header>
     ${example.markup}

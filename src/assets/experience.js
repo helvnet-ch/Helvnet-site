@@ -16,11 +16,19 @@ const fallbackSculptures = [...orbFallback.children];
 const orb = createEnergyOrb(orbCanvas);
 const status = experience.querySelector('[data-selection-status]');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const canonical = document.querySelector('link[rel="canonical"]');
+const siteOrigin = new URL(canonical.href).origin;
+const pageDescription = document.querySelector('meta[name="description"]');
+const socialTitle = document.querySelector('meta[property="og:title"]');
+const socialDescription = document.querySelector('meta[property="og:description"]');
+const socialUrl = document.querySelector('meta[property="og:url"]');
+let galleryTitle = document.getElementById('gallery-title');
 
 const wrap = (value) => (value % worlds.length + worlds.length) % worlds.length;
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const relative = (from, to) => wrap(to - from + worlds.length / 2) - worlds.length / 2;
 const currentAddress = () => new URL(location.href);
+const pagePath = ({ pathname }) => pathname.endsWith('/') ? pathname : `${pathname}/`;
 const responses = { position: 11.3, x: 8.8, y: 8.8, radius: 8.5, orbit: 9.3, visibility: 9.8 };
 const axes = Object.keys(responses);
 const zeroSpeed = Object.fromEntries(axes.map((axis) => [axis, 0]));
@@ -169,14 +177,34 @@ function moveArt(next, immediate = false, approach = false) {
   updateOrb();
 }
 
-function readRoute(url) {
-  const name = url.pathname.endsWith('/') ? url.pathname : `${url.pathname}/`;
-  if (name === '/' && url.hash === '#essayer') return screens.find((screen) => screen.dataset.screen === `${worlds[Math.max(selected, 0)]}-demo`);
-  return routes.get(name + url.hash) ?? routes.get(name);
+function readRoute(path, hash) {
+  if (path === '/' && hash === '#essayer') return screens.find((screen) => screen.dataset.screen === `${worlds[Math.max(selected, 0)]}-demo`);
+  return routes.get(path + hash) ?? routes.get(path);
+}
+
+function updatePageMetadata(path) {
+  const { pageTitle, pageDescription: description } = routes.get(path).dataset;
+  document.title = pageTitle;
+  pageDescription.content = description;
+  socialTitle.content = pageTitle;
+  socialDescription.content = description;
+  canonical.href = siteOrigin + path;
+  socialUrl.content = canonical.href;
+
+  const headingTag = path === '/' ? 'h1' : 'p';
+  if (galleryTitle.localName !== headingTag) {
+    const replacement = document.createElement(headingTag);
+    replacement.id = galleryTitle.id;
+    replacement.className = galleryTitle.className;
+    replacement.textContent = galleryTitle.textContent;
+    if (headingTag === 'h1') replacement.tabIndex = -1;
+    galleryTitle.replaceWith(replacement);
+    galleryTitle = replacement;
+  }
 }
 
 function focusScreen(screen) {
-  const heading = screen.querySelector('h1, h2');
+  const heading = screen.dataset.kind === 'gallery' ? galleryTitle : screen.querySelector('h1, h2');
   if (!heading) return;
   heading.tabIndex = -1;
   heading.focus({ preventScroll: true });
@@ -213,7 +241,8 @@ function changeScreen(screen, { direction = 1, focus = true } = {}) {
 }
 
 function open(url, { push = true, focus = true, direction = 1, immediate = false } = {}) {
-  const screen = readRoute(url);
+  const path = pagePath(url);
+  const screen = readRoute(path, url.hash);
   if (!screen) return false;
   const kind = screen.dataset.kind;
   const approach = current?.dataset.kind === 'gallery' && kind === 'service';
@@ -224,8 +253,13 @@ function open(url, { push = true, focus = true, direction = 1, immediate = false
   if (push && address !== location.pathname + location.search + location.hash) {
     history.pushState({ helvnetWorld: worlds[index] }, '', address);
   }
-  if (kind === 'quote') window.dispatchEvent(new Event('helvnet:quote'));
+  if (kind === 'demo') import('./examples.js').catch(console.error);
+  if (kind === 'quote') {
+    import('./site.js').catch(console.error);
+    window.dispatchEvent(new Event('helvnet:quote'));
+  }
 
+  updatePageMetadata(path);
   experience.dataset.current = screen.dataset.screen;
   experience.dataset.mode = kind;
   reflectSelection(index, false);
@@ -235,8 +269,6 @@ function open(url, { push = true, focus = true, direction = 1, immediate = false
     else link.removeAttribute('aria-current');
   }
   changeScreen(screen, { direction, focus });
-  const heading = screen.querySelector('h1, h2');
-  document.title = kind === 'gallery' ? 'Helvnet — Sites web, applications et intégrations IA' : `${heading.textContent.trim()} — Helvnet`;
 
   moveArt({
     position: goal.position + relative(goal.position, index),
@@ -289,7 +321,7 @@ document.addEventListener('click', (event) => {
     return;
   }
   if (url.hash === '#contenu') return;
-  const screen = readRoute(url);
+  const screen = readRoute(pagePath(url), url.hash);
   if (!screen) return;
   event.preventDefault();
   const order = ['gallery', 'service', 'demo', 'capabilities', 'atelier', 'quote'];

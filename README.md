@@ -26,3 +26,7 @@ npm.cmd run preview
 - `src/assets/experience.js` pilote les écrans, les gestes et l’historique. `src/assets/energy-orb.js` dessine les filaments, leur déformation et leur reflet. `src/assets/scene-motion.js` calcule leur vitesse et leur trajectoire entre les écrans.
 - `src/demo-views.mjs` et `src/assets/examples.js` contiennent les trois exemples fictifs. Ils fonctionnent dans le navigateur.
 - `src/config.mjs` centralise le domaine, le destinataire des devis et les redirections.
+
+## Hébergement et référencement
+
+[Audit SEO et mise en ligne sur Keywest](docs/audit-seo.md).

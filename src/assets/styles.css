@@ -60,6 +60,7 @@ img { block-size: auto; }
   justify-self: center;
   color: var(--muted);
   font-size: clamp(.8rem, 1.18vw, .91rem);
+  font-weight: 400;
   line-height: 1.35;
   text-align: center;
   text-wrap: balance;
@@ -248,7 +249,7 @@ html[data-stage-ready] .gallery-captions { display: grid; }
 html:not([data-stage-ready]) .service-intro, html:not([data-stage-ready]) .quote-screen { min-block-size: calc(100svh - var(--header-height)); }
 .service-center { align-self: center; min-inline-size: 0; }
 .service-story { max-inline-size: min(59%, 41rem); }
-.service-story .display-heading { margin-block: .42rem .76rem; text-wrap: pretty; }
+.service-story .display-heading { margin-block: .42rem .76rem; font-size: clamp(2.3rem, 5.4vw, 5.65rem); text-wrap: pretty; }
 .service-description { max-inline-size: 35ch; color: var(--muted); font-size: clamp(1.02rem, 1.64vw, 1.4rem); line-height: 1.5; text-wrap: pretty; }
 .service-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem .72rem; margin-block-start: clamp(.85rem, 2.3vh, 1.4rem); }
 .service-actions .button-primary + .button-primary { border-color: var(--edge); background: var(--page); color: var(--ink); }
@@ -312,13 +313,14 @@ html:not([data-stage-ready]) .service-intro, html:not([data-stage-ready]) .quote
 .capability-list li { border-block-start: 1px solid var(--line); padding-block: .65rem; }
 .capability-list h3 { color: var(--ink); font-size: clamp(1.15rem, 1.85vw, 1.9rem); font-weight: 670; letter-spacing: -.035em; }
 .capability-list p { max-inline-size: 37ch; margin-block-start: .33rem; color: var(--muted); line-height: 1.45; }
+.project-brief { max-inline-size: 64ch; margin-block: 0 1rem; color: var(--muted); line-height: 1.5; }
 
 .atelier-inner { align-self: center; }
 .atelier-inner .display-heading { margin-block: .36rem .8rem; text-wrap: pretty; }
 .atelier-inner > p:not(.eyebrow), .contact-intro > p:not(.eyebrow) { max-inline-size: 43ch; color: var(--muted); font-size: clamp(1.04rem, 1.62vw, 1.34rem); line-height: 1.48; }
 .atelier-inner > p + p { margin-block-start: .65rem; }
 .contact { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 1rem clamp(1.4rem, 6vw, 6.2rem); }
-.contact h1 { margin-block: .42rem .9rem; text-wrap: pretty; }
+.contact h1 { margin-block: .42rem .9rem; font-size: clamp(2.3rem, 5.6vw, 5.7rem); text-wrap: pretty; }
 .contact-address { display: inline-flex; align-items: center; min-block-size: 2.75rem; margin-block-start: .5rem; }
 .contact-panel { min-inline-size: 0; border: 1px solid var(--line); border-radius: .7rem; padding: clamp(.78rem, 2.4vw, 1.7rem); background: var(--page); }
 .contact-fields, .contact-axes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .55rem .72rem; min-inline-size: 0; }
@@ -352,6 +354,7 @@ html:not([data-stage-ready]) .service-intro, html:not([data-stage-ready]) .quote
 html[data-stage-ready] .site-footer { display: none; }
 .not-found { padding-block: 4rem; }
 .not-found p { margin-block: .8rem; }
+.not-found ul { display: grid; gap: .65rem; padding-inline-start: 1.2rem; }
 
 @media (max-width: 56rem) {
   .service-story { max-inline-size: 62%; }
@@ -388,9 +391,9 @@ html[data-stage-ready] .site-footer { display: none; }
   .swipe-help { display: inline; }
   .experience:not([data-mode="gallery"]) .fallback-sculpture { inset: 23.7% auto auto 50%; inline-size: min(55vw, 36svh, 17rem); }
   .service-screen, .info-screen { padding-block: .7rem .55rem; }
-  .service-intro .service-center { align-self: end; padding-block-start: clamp(7.4rem, 35dvh, 16rem); }
+  .service-intro .service-center { align-self: end; padding-block-start: clamp(7.4rem, 29dvh, 16rem); }
   .service-story { max-inline-size: none; }
-  .service-story .display-heading { margin-block: .28rem .48rem; }
+  .service-story .display-heading { margin-block: .28rem .48rem; font-size: clamp(2rem, 7.8vw, 4.1rem); }
   .service-description { font-size: 1rem; }
   .service-actions { margin-block-start: .68rem; }
   .service-dock { gap: .18rem .55rem; }
@@ -400,7 +403,7 @@ html[data-stage-ready] .site-footer { display: none; }
   .example-description h2 { margin-block: .31rem .49rem; }
   .example-description button { margin-block-start: .68rem; }
   .capability-list { grid-template-columns: minmax(0, 1fr); gap: .12rem; margin-block: .65rem .48rem; }
-  .contact h1 { margin-block: .27rem .52rem; }
+  .contact h1 { margin-block: .27rem .52rem; font-size: clamp(2rem, 8vw, 4.2rem); }
 }
 
 @media (max-width: 23rem) {

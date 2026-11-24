@@ -27,21 +27,24 @@ createServer(async (request, response) => {
     return;
   }
 
-  let path;
+  let url, path;
   try {
-    path = decodeURIComponent(new URL(request.url, 'http://127.0.0.1').pathname);
+    url = new URL(request.url, 'http://127.0.0.1');
+    path = decodeURIComponent(url.pathname);
   } catch {
     response.writeHead(400).end();
     return;
   }
 
   if (redirects.has(path)) {
-    response.writeHead(301, { Location: redirects.get(path) }).end();
+    const target = new URL(redirects.get(path), url.origin);
+    target.search = url.search;
+    response.writeHead(301, { Location: target.pathname + target.search + target.hash }).end();
     return;
   }
 
   const file = resolve(root, `.${extname(path) ? path : `${path}/index.html`}`);
-  if (!file.startsWith(root + sep) || !types[extname(file)]) {
+  if (path === '/404.html' || !file.startsWith(root + sep) || !types[extname(file)]) {
     response.writeHead(404, { 'Content-Type': types['.html'] }).end(request.method === 'HEAD' ? undefined : notFound);
     return;
   }

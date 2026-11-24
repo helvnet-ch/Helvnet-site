@@ -1,9 +1,43 @@
-import { contactEmail, contactPath, origin } from './config.mjs';
+import { contactEmail, contactPath, origin, pagesByPath } from './config.mjs';
 import { exampleSection } from './demo-views.mjs';
 import { offerings } from './offerings.mjs';
 
 const brand = '<a class="brand" href="/" aria-label="Helvnet, accueil"><img src="/assets/logo.png" srcset="/assets/logo-320.png 320w, /assets/logo.png 504w" sizes="152px" width="504" height="62" alt="Helvnet"></a>';
 const emailDraft = `mailto:${contactEmail}?subject=${encodeURIComponent('Demande de devis Helvnet')}&amp;body=${encodeURIComponent('Bonjour Diego,\r\n\r\nVoici mon besoin :\r\n\r\nNom :\r\nE-mail :\r\n\r\nMerci,')}`;
+const tagline = 'Sites web, applications et intégrations IA sur mesure.';
+const organizationId = `${origin}/#helvnet`;
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': organizationId,
+      name: 'Helvnet',
+      url: `${origin}/`,
+      logo: `${origin}/assets/logo-square.png`,
+      email: contactEmail,
+      founder: { '@type': 'Person', name: 'Diego Vicente' },
+      areaServed: ['Fribourg', 'Suisse romande'],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${origin}/#site`,
+      name: 'Helvnet',
+      url: `${origin}/`,
+      inLanguage: 'fr-CH',
+      publisher: { '@id': organizationId },
+    },
+  ],
+};
+
+function attribute(value) {
+  return value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;');
+}
+
+function pageMetadata(path) {
+  const { title, description } = pagesByPath.get(path);
+  return `data-page-title="${attribute(title)}" data-page-description="${attribute(description)}"`;
+}
 
 function contactHref(offer) {
   return offer ? `${contactPath}?axe=${offer}` : contactPath;
@@ -34,14 +68,14 @@ export function layout(page, content) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${page.title}</title>
-  <meta name="description" content="${page.description}">
+  <meta name="description" content="${attribute(page.description)}">
   <meta name="theme-color" content="#000000">
   ${page.noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" href="${canonical}">`}
   <meta property="og:type" content="website">
   <meta property="og:locale" content="fr_CH">
   <meta property="og:site_name" content="Helvnet">
-  <meta property="og:title" content="${page.title}">
-  <meta property="og:description" content="${page.description}">
+  <meta property="og:title" content="${attribute(page.title)}">
+  <meta property="og:description" content="${attribute(page.description)}">
   <meta property="og:url" content="${canonical}">
   <meta property="og:image" content="${origin}/assets/partage/helvnet.jpg">
   <meta property="og:image:width" content="1200">
@@ -51,19 +85,20 @@ export function layout(page, content) {
   <link rel="icon" type="image/png" href="/assets/favicon.png">
   <link rel="stylesheet" href="/assets/styles.css">
   <script type="module" src="/assets/navigation.js"></script>
-  ${experience ? '<script type="module" src="/assets/experience.js"></script>\n  <script type="module" src="/assets/examples.js"></script>\n  <script type="module" src="/assets/site.js"></script>' : ''}
+  ${experience ? '<script type="module" src="/assets/experience.js"></script>' : ''}
+  ${page.home ? `<script type="application/ld+json">${JSON.stringify(structuredData)}</script>` : ''}
 </head>
 <body>
   <a class="skip-link" href="#contenu">Aller au contenu</a>
   <header class="site-header">
     <div class="shell header-inner">
       ${brand}
-      <p class="header-tagline">Sites web, applications et intégrations IA sur mesure.</p>
+      ${page.home ? `<h1 class="header-tagline" id="gallery-title" tabindex="-1">${tagline}</h1>` : `<p class="header-tagline" id="gallery-title">${tagline}</p>`}
       <details class="site-menu">
         <summary><span class="menu-glyph" aria-hidden="true"></span> Menu</summary>
         <div class="menu-panel">
           <nav aria-label="Navigation principale">
-            <a href="/" data-menu-link="gallery">Accueil</a>
+            <a href="/" data-menu-link="gallery"${page.home ? ' aria-current="page"' : ''}>Accueil</a>
             ${offerings.map(({ path, name, id }) => `<a href="${path}" data-menu-link="${id}"${page.offer === id ? ' aria-current="page"' : ''}>${name}</a>`).join('')}
             <a href="/#atelier" data-menu-link="atelier">L’atelier</a>
           </nav>
@@ -91,8 +126,7 @@ function art() {
 }
 
 function gallery(page) {
-  return `<section class="screen gallery" id="metiers" data-screen="gallery" data-route="/" data-kind="gallery"${page.home ? '' : ' hidden'} aria-labelledby="gallery-title">
-    <h1 id="gallery-title" class="visually-hidden" tabindex="-1">Les services Helvnet</h1>
+  return `<section class="screen gallery" id="metiers" data-screen="gallery" data-route="/" data-kind="gallery" ${pageMetadata('/')}${page.home ? '' : ' hidden'} aria-labelledby="gallery-title">
     <div class="gallery-interaction" data-swipe-surface>
       <button type="button" class="step-button step-previous" data-step="-1" aria-label="Service précédent" hidden><span aria-hidden="true"></span></button>
       <button type="button" class="step-button step-next" data-step="1" aria-label="Service suivant" hidden><span aria-hidden="true"></span></button>
@@ -101,7 +135,7 @@ function gallery(page) {
       ${offerings.map((offer, index) => `<div class="gallery-caption" data-caption="${offer.id}"${index ? ' hidden' : ''}>
         <h2>${offer.name}</h2>
         <p>${offer.summary}</p>
-        <a class="button button-outline" href="${offer.path}" data-enter="${offer.id}">Explorer ce service <span class="button-chevron" aria-hidden="true"></span></a>
+        <a class="button button-outline" href="${offer.path}" data-enter="${offer.id}">${offer.galleryLink} <span class="button-chevron" aria-hidden="true"></span></a>
       </div>`).join('')}
     </div>
     <div class="gallery-dock shell">
@@ -128,11 +162,11 @@ function serviceTabs(offer, current) {
 function serviceScreens(offer, initial) {
   const hidden = initial ? '' : ' hidden';
   const meta = `data-world="${offer.id}" data-service-path="${offer.path}"`;
-  return `<section class="screen service-screen service-intro" data-screen="${offer.id}" data-route="${offer.path}" data-kind="service" ${meta}${hidden} aria-labelledby="title-${offer.id}">
+  return `<section class="screen service-screen service-intro" data-screen="${offer.id}" data-route="${offer.path}" data-kind="service" ${meta} ${pageMetadata(offer.path)}${hidden} aria-labelledby="title-${offer.id}">
     <div class="service-center shell">
       <div class="service-story">
         <p class="eyebrow">Sur mesure</p>
-        <h1 id="title-${offer.id}" class="display-heading" tabindex="-1">${offer.name}</h1>
+        <h1 id="title-${offer.id}" class="display-heading" tabindex="-1">${offer.heading}</h1>
         <p class="service-description">${offer.description}</p>
         <div class="service-actions"><a class="button button-primary" href="${offer.path}#${offer.section}">Essayer la démo</a>${quoteLink(offer.id)}</div>
       </div>
@@ -151,6 +185,7 @@ function serviceScreens(offer, initial) {
         <p class="eyebrow">${offer.name}</p>
         <h2 class="display-heading" id="capabilities-${offer.id}" tabindex="-1">Ce que je peux réaliser</h2>
         <ul class="capability-list">${offer.capabilities.map(([title, description]) => `<li><h3>${title}</h3><p>${description}</p></li>`).join('')}</ul>
+        <p class="project-brief">${offer.projectBrief}</p>
         ${quoteLink(offer.id)}
       </div>
     </div>
@@ -161,9 +196,9 @@ function serviceScreens(offer, initial) {
 function atelier(initial) {
   return `<section class="screen info-screen atelier" id="atelier" data-screen="atelier" data-route="/#atelier" data-kind="atelier"${initial ? '' : ' hidden'} aria-labelledby="atelier-title">
     <div class="shell atelier-inner">
-      <p class="eyebrow">Suisse romande</p>
-      <h1 class="display-heading" id="atelier-title" tabindex="-1">L’atelier Helvnet</h1>
-      <p>Je suis Diego Vicente. Mon parcours de l’électronique au logiciel m’a appris à suivre le chemin d’une information, du premier message à l’action qui en découle.</p>
+      <p class="eyebrow">Fribourg · Suisse romande</p>
+      <h2 class="display-heading" id="atelier-title" tabindex="-1">L’atelier Helvnet</h2>
+      <p>Je suis Diego Vicente. Avec Helvnet, j’accompagne les indépendants et les PME de Fribourg et de Suisse romande pour créer un site, développer un outil interne ou automatiser une tâche.</p>
       <p>Vous me décrivez votre façon de travailler. Je vous propose un premier périmètre, puis un devis sur mesure.</p>
       <div class="service-actions">${quoteLink(undefined, ' data-active-quote')}<a class="text-link" href="mailto:${contactEmail}">${contactEmail}</a></div>
     </div>
@@ -172,12 +207,12 @@ function atelier(initial) {
 }
 
 function contact(initial) {
-  return `<section class="screen info-screen quote-screen" data-screen="quote" data-route="${contactPath}" data-kind="quote"${initial ? '' : ' hidden'} aria-labelledby="quote-title">
+  return `<section class="screen info-screen quote-screen" data-screen="quote" data-route="${contactPath}" data-kind="quote" ${pageMetadata(contactPath)}${initial ? '' : ' hidden'} aria-labelledby="quote-title">
     <div class="shell contact">
       <div class="contact-intro">
         <p class="eyebrow">Demande de devis</p>
-        <h1 class="display-heading" id="quote-title" tabindex="-1">Quel projet avez-vous en tête&nbsp;?</h1>
-        <p>Décrivez-moi ce que vous aimeriez créer ou simplifier. On précise ensemble ce qui est à faire, puis je vous propose un devis.</p>
+        <h1 class="display-heading" id="quote-title" tabindex="-1">Un devis pour votre projet informatique</h1>
+        <p>Indiquez votre objectif, les outils ou le site que vous utilisez déjà et votre échéance si elle est connue. On précise ensemble le périmètre, puis je vous propose un devis.</p>
         <a class="text-link contact-address" href="mailto:${contactEmail}">${contactEmail}</a>
       </div>
       <div class="contact-panel">
@@ -218,4 +253,17 @@ export function experiencePage(page) {
     ${contact(initial === 'quote')}
     <p class="visually-hidden" data-selection-status role="status"></p>
   </main>`;
+}
+
+export function notFoundPage() {
+  const page = {
+    path: '/404.html', title: 'Page introuvable | Helvnet',
+    description: 'Retrouvez les trois services de Helvnet et le formulaire de devis.', noindex: true,
+  };
+  return layout(page, `<main class="shell not-found" id="contenu" tabindex="-1">
+    <h1 class="display-heading">Page introuvable</h1>
+    <p>Cette page a été déplacée ou retirée. Retrouvez les services de l’atelier Helvnet.</p>
+    <ul>${offerings.map((offer) => `<li><a class="text-link" href="${offer.path}">${offer.galleryLink}</a></li>`).join('')}</ul>
+    <div class="service-actions">${quoteLink()}<a class="text-link" href="/">Revenir à l’accueil</a></div>
+  </main>`);
 }
