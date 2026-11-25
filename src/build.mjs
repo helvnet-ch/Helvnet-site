@@ -1,4 +1,4 @@
-import { copyFile, lstat, mkdir, mkdtemp, realpath, rename, rm, writeFile } from 'node:fs/promises';
+import { copyFile, cp, lstat, mkdir, mkdtemp, realpath, rename, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { origin, pages, redirects } from './config.mjs';
@@ -10,7 +10,8 @@ const output = join(root, 'dist');
 const staging = await mkdtemp(join(root, '.helvnet-build-'));
 
 const assets = [
-  'styles.css', 'navigation.js', 'experience.js', 'scene-motion.js', 'energy-orb.js', 'examples.js', 'site.js',
+  'styles.css', 'navigation.js', 'experience.js', 'scene-motion.js', 'energy-orb.js', 'sculpture-shapes.js',
+  'examples.js', 'site.js',
   'logo.png', 'logo-320.png', 'logo-square.png', 'favicon.png',
   'partage/helvnet.jpg',
 ];
@@ -52,7 +53,18 @@ try {
     writeFile(join(staging, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${origin}/sitemap.xml\n`),
   ]);
   await removeGeneratedDirectory(output);
-  await rename(staging, output);
+  try {
+    await rename(staging, output);
+  } catch (error) {
+    if (process.platform !== 'win32' || error.code !== 'EPERM') throw error;
+    await mkdir(output);
+    try {
+      await cp(staging, output, { recursive: true, force: false, errorOnExist: true });
+    } catch (copyError) {
+      await removeGeneratedDirectory(output);
+      throw copyError;
+    }
+  }
 } finally {
   await removeGeneratedDirectory(staging);
 }

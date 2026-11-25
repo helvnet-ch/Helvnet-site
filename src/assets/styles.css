@@ -153,26 +153,46 @@ html[data-stage-ready] .experience { block-size: calc(100dvh - var(--header-heig
   inline-size: min(54vw, 37svh, 23rem);
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
-  border: 1px solid color-mix(in srgb, var(--pigment) 35%, transparent);
-  border-radius: 47% 53% 50% 50% / 51% 45% 55% 49%;
-  background:
-    repeating-radial-gradient(ellipse 106% 49% at 28% 26%, transparent 0 6px, color-mix(in srgb, var(--pigment) 53%, transparent) 7px, transparent 8px),
-    radial-gradient(ellipse at 36% 32%, color-mix(in srgb, var(--pigment) 14%, transparent), transparent 76%);
 }
-.fallback-sculpture::after {
+.fallback-sculpture::before, .fallback-sculpture::after {
   content: '';
   position: absolute;
-  inset: 82% 0 auto;
-  block-size: 100%;
-  border-radius: inherit;
-  background: inherit;
-  mask-image: linear-gradient(transparent 3%, #000 95%);
-  opacity: .32;
-  transform: scaleY(-.39);
+  inset: 0;
+  clip-path: var(--silhouette);
+  background: var(--surface);
 }
-[data-fallback-sculpture="web"] { --pigment: #c6ff5c; }
-[data-fallback-sculpture="application"] { --pigment: #74a4bc; aspect-ratio: .83; }
-[data-fallback-sculpture="ia"] { --pigment: #f005d8; aspect-ratio: 1.13; border-radius: 46% 54% 38% 62% / 48% 55% 45% 52%; }
+.fallback-sculpture::after {
+  inset: 102% 0 auto;
+  block-size: 100%;
+  mask-image: linear-gradient(transparent 12%, #000 95%);
+  opacity: .32;
+  transform-origin: 50% 0;
+  transform: translateY(36%) scaleY(-.36);
+}
+[data-fallback-sculpture="web"] {
+  --pigment: #c6ff5c;
+  --silhouette: polygon(15% 1%, 92% 60%, 61% 61%, 75% 88%, 58% 97%, 43% 69%, 17% 89%);
+  --surface: repeating-linear-gradient(73deg, transparent 0 5px, color-mix(in srgb, var(--pigment) 68%, transparent) 6px 7px),
+    linear-gradient(135deg, color-mix(in srgb, var(--pigment) 37%, #141713), #181e0e);
+}
+[data-fallback-sculpture="application"] {
+  --pigment: #74a4bc;
+  --tile: linear-gradient(145deg, #9dc0d2, var(--pigment));
+  --silhouette: inset(4% round 23%);
+  --surface: var(--tile) 26% 26% / 25% 25% no-repeat, var(--tile) 74% 26% / 25% 25% no-repeat,
+    var(--tile) 26% 74% / 25% 25% no-repeat, var(--tile) 74% 74% / 25% 25% no-repeat,
+    linear-gradient(140deg, #476373, #111b23);
+}
+[data-fallback-sculpture="ia"] {
+  --pigment: #f005d8;
+  --silhouette: polygon(44% 4%, 50% 2%, 55% 5%, 56% 25%, 61% 25%, 72% 11%, 77% 11%, 80% 15%, 70% 32%,
+    75% 35%, 93% 30%, 97% 33%, 97% 38%, 80% 45%, 81% 51%, 96% 55%, 98% 60%, 94% 64%, 78% 62%,
+    75% 68%, 85% 82%, 83% 87%, 77% 88%, 66% 77%, 61% 79%, 61% 95%, 57% 99%, 52% 96%, 49% 82%,
+    43% 80%, 34% 93%, 29% 94%, 25% 90%, 32% 74%, 27% 71%, 13% 77%, 8% 75%, 8% 70%, 21% 61%,
+    20% 56%, 5% 53%, 2% 49%, 5% 45%, 22% 45%, 24% 39%, 12% 31%, 11% 26%, 16% 23%, 31% 30%,
+    36% 26%, 32% 13%, 35% 8%, 40% 9%, 46% 23%);
+  --surface: radial-gradient(circle at 39% 39%, #f4a1e2, #ca43b8 29%, #941684 49%, #53024b 80%);
+}
 .experience[data-mode="gallery"] :is([data-fallback-sculpture="application"], [data-fallback-sculpture="ia"]) {
   inset-block-start: 27%;
   inline-size: min(27vw, 20svh, 12rem);
@@ -228,7 +248,7 @@ html[data-stage-ready] .gallery-interaction { cursor: grab; touch-action: pinch-
 .gallery-captions { z-index: 1; text-align: center; padding-inline: var(--gutter); }
 html[data-stage-ready] .gallery-captions { display: grid; }
 .gallery-caption { grid-area: 1 / 1; align-self: end; }
-.gallery-caption[aria-hidden="true"] { visibility: hidden; }
+.gallery-caption[aria-hidden="true"]:not([data-dissolving]) { visibility: hidden; }
 .gallery-caption h2 { font-size: clamp(2.35rem, 6.4vw, 6.2rem); font-weight: 695; line-height: .94; letter-spacing: -.064em; word-spacing: .03em; text-wrap: balance; }
 .gallery-caption p { margin-block: .5rem .65rem; color: var(--muted); font-size: .98rem; line-height: 1.35; text-wrap: balance; }
 .gallery-caption .button { padding-inline: .92rem; }

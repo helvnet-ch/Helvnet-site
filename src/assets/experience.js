@@ -1,4 +1,4 @@
-import { sculpturePoses, settleAxis, stagePose } from './scene-motion.js';
+import { glideAxis, sculpturePoses, settleAxis, smoothStep, stagePose } from './scene-motion.js';
 import { createEnergyOrb, sculptureTone } from './energy-orb.js';
 
 const experience = document.querySelector('[data-experience]');
@@ -33,14 +33,16 @@ const responses = { position: 11.3, x: 8.8, y: 8.8, radius: 8.5, orbit: 9.3, vis
 const axes = Object.keys(responses);
 const zeroSpeed = Object.fromEntries(axes.map((axis) => [axis, 0]));
 const sceneTime = 990;
-const orbitTime = 1060;
+const travelFraction = .91;
 
 let current;
 let selected = -1;
 let drag;
 let orbFrame = 0;
 let orbLastDraw = 0;
+let orbLastMotion = -Infinity;
 let orbTime = 0;
+let orbSettling = false;
 let motion;
 let screenMotion = [];
 let viewport = { width: 1, height: 1, mobile: false };
@@ -50,13 +52,57 @@ let shape = { tone: '', lines: 28, opening: 22 };
 let appearance = { position: 0, ...stagePose('gallery', viewport) };
 let goal = { ...appearance };
 const speeds = { ...zeroSpeed };
+const captionAnimations = new Map();
 
-function reflectSelection(index, remember) {
+function stopCaptionAnimations() {
+  for (const [caption, animation] of captionAnimations) {
+    delete caption.dataset.dissolving;
+    animation.cancel();
+  }
+  captionAnimations.clear();
+}
+
+function dissolveCaptions(previous, active, direction, duration) {
+  captions.forEach((caption, index) => {
+    const enters = index === active;
+    const before = previous[index];
+    if (!enters && before.opacity < .005) return;
+    if (!enters) caption.dataset.dissolving = '';
+    const animation = caption.animate([
+      before.opacity > .005 ? before
+        : { opacity: 0, transform: `translate(${direction * 22}px, 17px)` },
+      enters ? { opacity: 1, transform: 'none' }
+        : { opacity: 0, transform: `translate(${direction * -18}px, -12px)` },
+    ], {
+      delay: enters && before.opacity < .005 ? duration * .29 : 0,
+      duration: duration * (enters ? .48 : .44),
+      easing: 'cubic-bezier(.45,0,.25,1)',
+      fill: 'both',
+    });
+    captionAnimations.set(caption, animation);
+    animation.finished.then(() => {
+      if (captionAnimations.get(caption) !== animation) return;
+      delete caption.dataset.dissolving;
+      captionAnimations.delete(caption);
+      animation.cancel();
+    }).catch(() => {});
+  });
+}
+
+function reflectSelection(index, remember, transition) {
   const world = worlds[index];
   if (remember && current?.dataset.kind === 'gallery' && history.state?.helvnetWorld !== world) {
     history.replaceState({ ...history.state, helvnetWorld: world }, '');
   }
   if (selected === index) return;
+  const previous = transition && !reducedMotion.matches && captions.map((caption) => {
+    const style = getComputedStyle(caption);
+    return {
+      opacity: caption.hidden || style.visibility === 'hidden' ? 0 : Number(style.opacity),
+      transform: style.transform,
+    };
+  });
+  stopCaptionAnimations();
   selected = index;
   experience.dataset.world = world;
   reflectTone();
@@ -67,6 +113,7 @@ function reflectSelection(index, remember) {
     captions[i].inert = i !== index;
     captions[i].setAttribute('aria-hidden', String(i !== index));
   }
+  if (previous) dissolveCaptions(previous, index, transition.direction, transition.duration);
   for (const quote of quotes) quote.href = `/contact/?axe=${world}`;
   if (current?.dataset.kind === 'gallery') {
     status.textContent = choices[index].textContent.trim();
@@ -99,6 +146,7 @@ function updateOrb(redraw = false) {
   } else {
     cancelAnimationFrame(orbFrame);
     orbFrame = orbLastDraw = 0;
+    orbLastMotion = -Infinity;
   }
 }
 
@@ -106,7 +154,9 @@ function drawOrb(now) {
   orbFrame = 0;
   if (!orbVisible()) return;
   const animate = !reducedMotion.matches;
-  if (!orbLastDraw || !animate || motion || drag?.kind || now - orbLastDraw >= 30) {
+  if (motion || drag?.kind || orbSettling) orbLastMotion = now;
+  const interval = 30 * smoothStep(0, 260, now - orbLastMotion);
+  if (!orbLastDraw || !animate || now - orbLastDraw >= interval) {
     const elapsed = animate && orbLastDraw ? clamp(now - orbLastDraw, 0, 65) / 1000 : 0;
     orbTime += elapsed;
     let state = appearance;
@@ -119,8 +169,11 @@ function drawOrb(now) {
         Object.assign(speeds, zeroSpeed);
         motion = undefined;
       }
+    } else if (drag?.kind === 'horizontal') {
+      const rest = Math.max(0, now - drag.sampleTime - 26) / 1000;
+      velocity = { ...speeds, position: speeds.position * Math.exp(-17 * rest) };
     }
-    orb.draw(state, shape, {
+    orbSettling = orb.draw(state, shape, {
       pointer: animate ? pointer : [0, 0], time: orbTime, elapsed,
       velocity: animate ? velocity : zeroSpeed, active: selected, animated: animate,
     });
@@ -130,16 +183,20 @@ function drawOrb(now) {
       orbFallback.hidden = true;
     }
   }
-  if (animate && (motion || appearance.visibility > .24)) orbFrame = requestAnimationFrame(drawOrb);
+  if (animate && (motion || orbSettling || appearance.visibility > .24)) orbFrame = requestAnimationFrame(drawOrb);
 }
 
 function sample({ from, speed, to, duration, galleryTurn }, elapsed) {
   if (elapsed >= duration) return { state: { ...to }, velocity: zeroSpeed };
   const state = {};
   const velocity = {};
+  const seconds = elapsed / 1000;
+  // Allow a short settling interval after the orbit has stopped.
+  const travelTime = duration / 1000 * travelFraction;
   for (const axis of axes) {
-    const response = galleryTurn && axis === 'position' ? 7.9 : responses[axis];
-    [state[axis], velocity[axis]] = settleAxis(from[axis], speed[axis], to[axis], response, elapsed / 1000);
+    [state[axis], velocity[axis]] = galleryTurn && axis === 'position'
+      ? glideAxis(from[axis], speed[axis], to[axis], travelTime, seconds)
+      : settleAxis(from[axis], speed[axis], to[axis], responses[axis], seconds);
   }
   return { state, velocity };
 }
@@ -169,8 +226,9 @@ function moveArt(next, immediate = false, approach = false) {
   }
 
   if (approach) speeds.radius += Math.min(appearance.radius * 5.7, 1050);
-  const galleryTurn = appearance.orbit === 1 && goal.orbit === 1;
-  const duration = galleryTurn ? orbitTime : sceneTime;
+  const distance = Math.abs(goal.position - appearance.position);
+  const galleryTurn = appearance.orbit === 1 && goal.orbit === 1 && (distance > .001 || speeds.position !== 0);
+  const duration = galleryTurn ? clamp(600 + 510 * distance, 600, 1360) : sceneTime;
   const started = performance.now();
   motion = { from: appearance, speed: { ...speeds }, to: goal, started, duration, galleryTurn };
   if (document.hidden) motion.pausedAt = started;
@@ -283,17 +341,10 @@ function choose(index) {
 }
 
 function turnTo(position) {
-  const previous = selected;
   const direction = Math.sign(position - goal.position);
-  reflectSelection(wrap(Math.round(position)), true);
-  if (previous !== selected && !reducedMotion.matches) {
-    const caption = captions[selected];
-    caption.getAnimations().forEach((animation) => animation.cancel());
-    caption.animate([{ opacity: .42, transform: `translateX(${direction * 12}px) translateY(4px)` }, { opacity: 1, transform: 'translate(0, 0)' }], {
-      duration: 410, easing: 'cubic-bezier(.25,.71,.24,1)',
-    });
-  }
   moveArt({ position });
+  const next = wrap(Math.round(position));
+  reflectSelection(next, true, { direction, duration: motion?.duration ?? 700 });
 }
 
 function stepScreen(direction) {
@@ -432,7 +483,7 @@ surface.addEventListener('pointermove', (event) => {
     speeds.position = speeds.position * .45 + newSpeed * .55;
     appearance.position = next;
     drag.sampleTime = event.timeStamp;
-    reflectSelection(wrap(Math.round(appearance.position)), false);
+    reflectSelection(wrap(Math.round(appearance.position)), false, { direction: Math.sign(newSpeed), duration: 440 });
     if (!orb) paintFallback(appearance);
   }
 });
@@ -445,9 +496,15 @@ function finishDrag(event) {
   if (!gesture.kind) {
     if (event.type !== 'pointerup') return;
     const rect = experience.getBoundingClientRect();
-    const state = motion ? sample(motion, motionElapsed(motion)).state : appearance;
-    const piece = sculpturePoses(state, viewport.width, worlds.length).findLast(({ x, y, size }) => (
-      Math.hypot(event.clientX - rect.left - x, event.clientY - rect.top - y) < size * .92
+    const x = event.clientX - rect.left, y = event.clientY - rect.top;
+    if (orb && !orbCanvas.hidden) {
+      const index = orb.pick(x, y);
+      if (index !== undefined && index !== selected) choose(index);
+      return;
+    }
+    const { state, velocity } = motion ? sample(motion, motionElapsed(motion)) : { state: appearance, velocity: speeds };
+    const piece = sculpturePoses(state, viewport.width, worlds.length, velocity).findLast((piece) => (
+      Math.hypot(x - piece.x, y - piece.y) < piece.size * .92
     ));
     if (piece && piece.index !== selected) choose(piece.index);
     return;
@@ -536,9 +593,14 @@ if ('ResizeObserver' in window) {
 }
 window.addEventListener('resize', measure);
 reducedMotion.addEventListener('change', () => {
+  stopCaptionAnimations();
   moveArt(goal, true);
 });
 document.addEventListener('visibilitychange', () => {
+  for (const animation of captionAnimations.values()) {
+    if (document.hidden) animation.pause();
+    else animation.play();
+  }
   if (motion) {
     const now = performance.now();
     if (document.hidden) motion.pausedAt ??= now;
